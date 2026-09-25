@@ -1,0 +1,113 @@
+@inject WebUiStateService State
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+@if (State.IsVideoModalOpen)
+{
+    <div class="bp-modal-backdrop" @onclick="CloseModal" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="bp-modal-box bp-video-modal-box" style="max-width: 920px; padding: 1.5rem;" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+            <button type="button" class="bp-modal-close-btn" @onclick="CloseModal" aria-label="Cerrar video">✕</button>
+
+            <!-- Video Player Canvas with 16:9 Aspect Ratio and HD Poster -->
+            <div class="bp-video-stage-wrapper" style="position: relative; border-radius: var(--radius-md, 8px); overflow: hidden; background: #000; aspect-ratio: 16 / 9; box-shadow: 0 20px 50px rgba(0,0,0,0.85); border: 1px solid rgba(8, 184, 232, 0.35);">
+                <video id="bp-brand-video-player" 
+                       controls 
+                       autoplay 
+                       playsinline
+                       preload="auto"
+                       poster="images/process/hd-campo.jpg"
+                       style="width: 100%; height: 100%; display: block; object-fit: contain; outline: none; background: #000;">
+                    <source src="videos/brand-video.mp4?v=20260924_faststart" type="video/mp4" />
+                    Tu navegador no soporta la reproducción directa de video HTML5.
+                </video>
+
+                <!-- Floating Unmute Pill (Displays if browser blocked audio during autoplay) -->
+                <button type="button" 
+                        id="bp-video-unmute-hint" 
+                        onclick="window.bpVideoController && window.bpVideoController.unmute('bp-brand-video-player')"
+                        style="display: none; position: absolute; bottom: 60px; left: 20px; background: rgba(0, 24, 38, 0.92); border: 1.5px solid var(--color-cyan, #08b8e8); color: #ffffff; padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px); box-shadow: 0 8px 24px rgba(0,0,0,0.6); align-items: center; gap: 0.5rem; z-index: 10;"
+                        aria-label="Activar sonido del video">
+                    <span>🔊</span>
+                    <span>Activar Audio</span>
+                </button>
+
+                <!-- Fallback Notice in case of network or codec error -->
+                <div id="bp-video-error-notice" style="display: none; position: absolute; inset: 0; background: rgba(6, 18, 30, 0.95); flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; gap: 1rem; z-index: 15;">
+                    <p style="color: #ffffff; font-size: 1.05rem; margin: 0; font-weight: 600;">No se pudo inicializar la reproducción directa.</p>
+                    <a href="videos/brand-video.mp4" target="_blank" class="bp-btn bp-btn-cyan" style="font-size: 0.85rem; padding: 0.65rem 1.4rem;">
+                        <span>Ver video en nueva pestaña ↗</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Video Metadata & Brand Action Row -->
+            <div style="margin-top: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <h4 id="video-modal-title" style="font-family: var(--font-display, 'Barlow Condensed', sans-serif); font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; color: #ffffff; margin-bottom: 0.25rem;">
+                        Berries Grown with Purpose: Cosechando el Futuro
+                    </h4>
+                    <p style="font-size: 0.88rem; color: rgba(247,250,252,0.8); line-height: 1.4; max-width: 600px; margin: 0;">
+                        Recorrido cinematográfico por nuestros campos protegidos, innovación genética varietal y trazabilidad de frío internacional.
+                    </p>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <a href="videos/brand-video.mp4" download="Berries_Paradise_Brand_Video.mp4" class="bp-btn bp-btn-outline-white" style="padding: 0.7rem 1.2rem; font-size: 0.82rem;" title="Descargar video original">
+                        <span>Descargar</span>
+                    </a>
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="OpenContactFromModal" style="padding: 0.7rem 1.4rem; font-size: 0.85rem;">
+                        <span>Contactar Ventas</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (State.IsVideoModalOpen)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("bpVideoController.init", "bp-brand-video-player");
+            }
+            catch { }
+        }
+    }
+
+    private async Task CloseModal()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("bpVideoController.pause", "bp-brand-video-player");
+        }
+        catch { }
+        State.CloseVideoModal();
+    }
+
+    private async Task OpenContactFromModal()
+    {
+        await CloseModal();
+        State.OpenContactModal();
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            await CloseModal();
+        }
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

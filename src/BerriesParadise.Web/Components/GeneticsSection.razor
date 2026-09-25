@@ -1,0 +1,65 @@
+@inject GeneticsCatalog Genetics
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-genetics-editorial-section" id="genetica">
+    <div class="bp-genetics-wrapper">
+        <!-- Section Header -->
+        <div class="bp-genetics-header-row">
+            <div class="bp-genetics-intro-text">
+                <span class="bp-section-kicker fade-up">@State.T("genetics.kicker")</span>
+                <h2 class="bp-section-headline fade-up delay-1">
+                    @State.T("genetics.title1")<br />
+                    <span class="highlight-cyan">@State.T("genetics.title2")</span>
+                </h2>
+                <p class="bp-section-subheading fade-up delay-2">
+                    @State.T("genetics.subtitle")
+                </p>
+            </div>
+
+            <div class="bp-genetics-header-cta fade-up delay-3">
+                <button type="button" class="bp-btn bp-btn-outline-cyan" @onclick="OpenDefaultGenetics">
+                    <span>@State.T("genetics.btnCatalog")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Four Large Photographic Editorial Cards (Desktop Grid / Mobile Horizontal Snap Carousel) -->
+        <div class="bp-genetics-cards-strip" role="region" aria-label="Variedades de Genética Premium">
+            @foreach (var variety in Genetics.GetAll())
+            {
+                <GeneticCard Variety="variety" OnSelect="HandleSelectVariety" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    private void HandleSelectVariety(GeneticVariety variety)
+    {
+        State.OpenGeneticsModal(variety);
+    }
+
+    private void OpenDefaultGenetics()
+    {
+        var first = Genetics.GetAll().FirstOrDefault();
+        if (first != null)
+        {
+            State.OpenGeneticsModal(first);
+        }
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

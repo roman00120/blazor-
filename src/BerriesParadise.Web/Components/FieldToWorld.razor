@@ -1,0 +1,269 @@
+@inject QualityCatalog Quality
+@inject WebUiStateService State
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<section class="bp-field-section" id="proceso">
+    <!-- Parallax background backdrop -->
+    <div class="bp-field-bg-wrap" aria-hidden="true">
+        <div class="bp-field-bg-overlay"></div>
+    </div>
+
+    <div class="bp-field-container">
+        <!-- Section Header -->
+        <div class="bp-field-intro">
+            <span class="bp-section-kicker fade-up">@State.T("field.kicker")</span>
+            <h2 class="bp-section-headline fade-up delay-1">
+                @State.T("field.title1")<br />
+                <span class="highlight-cyan">@State.T("field.title2")</span>
+            </h2>
+            <p class="bp-section-subheading fade-up delay-2">
+                @State.T("field.subtitle")
+            </p>
+        </div>
+
+        <!-- Horizontal Interactive Timeline Navigation (Desktop) -->
+        <div class="bp-timeline-nav-wrapper fade-up delay-3" aria-label="Línea de tiempo del proceso">
+            <div class="bp-timeline-track-rail">
+                <div class="bp-timeline-track-fill" style="width: @((activeStepIndex * 100.0) / (steps.Count - 1))%;"></div>
+            </div>
+
+            <div class="bp-timeline-nodes-row" role="tablist">
+                @for (int i = 0; i < steps.Count; i++)
+                {
+                    var idx = i;
+                    var step = steps[i];
+                    var isActive = (idx == activeStepIndex);
+                    var isCompleted = (idx < activeStepIndex);
+
+                    <button type="button" 
+                            class="bp-timeline-node-btn @(isActive ? "active" : "") @(isCompleted ? "completed" : "")"
+                            @onclick="() => SetActiveStep(idx)"
+                            role="tab"
+                            aria-selected="@(isActive ? "true" : "false")"
+                            aria-label="Etapa @step.StepNumber: @step.Title">
+                        <span class="bp-node-ring">
+                            <span class="bp-node-dot"></span>
+                        </span>
+                        <span class="bp-node-meta">
+                            <span class="bp-node-num">0@(step.StepNumber)</span>
+                            <span class="bp-node-title">@step.Title.ToUpper()</span>
+                        </span>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Interactive Storytelling Presentation (Active Showcase Stage) -->
+        @{
+            var current = steps[activeStepIndex];
+        }
+        <div class="bp-story-showcase-stage fade-up delay-3">
+            <!-- Stage Image with Subtle Zoom and Temperature Tag -->
+            <div class="bp-story-media-box" @onclick="State.OpenVideoModal" style="cursor: pointer; position: relative;" title="Ver video documental de @current.Title">
+                <div class="bp-story-img-wrapper @(isChanging ? "switching" : "")">
+                    <img src="@current.ImageUrl" alt="@current.Title - @current.Subtitle" class="bp-story-img" loading="lazy" />
+                    <div class="bp-story-img-gradient"></div>
+                </div>
+
+                <!-- Floating Play Button Overlay -->
+                <button type="button" 
+                        class="bp-quality-play-btn" 
+                        @onclick="State.OpenVideoModal" 
+                        @onclick:stopPropagation="true"
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: rgba(0, 24, 38, 0.85); border: 2px solid var(--color-cyan); color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(8px); transition: transform 0.25s, background-color 0.25s; z-index: 5;"
+                        aria-label="Ver video documental de @current.Title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px; color: var(--color-cyan);">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+
+                <div class="bp-story-media-badges">
+                    <span class="bp-story-spec-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                        </svg>
+                        <span>@current.TemperatureSpec</span>
+                    </span>
+                    <span class="bp-story-cert-badge">@current.CertificationStandard</span>
+                </div>
+            </div>
+
+            <!-- Stage Content Details -->
+            <div class="bp-story-info-panel @(isChanging ? "switching" : "")">
+                <div class="bp-story-step-indicator">
+                    <span class="bp-step-badge">ETAPA 0@(current.StepNumber) / 05</span>
+                    <span class="bp-step-highlight">@current.Highlight</span>
+                </div>
+
+                <h3 class="bp-story-title">@current.Title.ToUpper()</h3>
+                <h4 class="bp-story-subtitle">@current.Subtitle</h4>
+
+                <p class="bp-story-desc">
+                    @current.Description
+                </p>
+
+                <!-- Navigation Controls -->
+                <div class="bp-story-actions-row">
+                    <div class="bp-story-nav-buttons">
+                        <button type="button" 
+                                class="bp-nav-arrow-btn" 
+                                @onclick="PrevStep" 
+                                disabled="@(activeStepIndex == 0)"
+                                aria-label="Etapa anterior">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button type="button" 
+                                class="bp-nav-arrow-btn" 
+                                @onclick="NextStep" 
+                                disabled="@(activeStepIndex == steps.Count - 1)"
+                                aria-label="Etapa siguiente">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                        <button type="button" class="bp-btn bp-btn-cyan" @onclick="State.OpenVideoModal" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.35rem; font-size: 0.85rem;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <span>Ver Video de Origen</span>
+                        </button>
+
+                        <button type="button" class="bp-btn bp-btn-outline-cyan" @onclick="() => State.OpenContactModal()" style="padding: 0.75rem 1.35rem; font-size: 0.85rem;">
+                            <span>@State.T("field.btnProtocols")</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Vertical Storytelling (Flows vertically with scroll markers on mobile screens) -->
+        <div class="bp-mobile-vertical-storytelling" role="feed" aria-label="Línea de tiempo vertical de calidad">
+            @foreach (var step in steps)
+            {
+                <article class="bp-mobile-story-card" id="mobile-step-@step.StepNumber">
+                    <div class="bp-mobile-card-media">
+                        <img src="@step.ImageUrl" alt="@step.Title" loading="lazy" />
+                        <span class="bp-mobile-step-pill">0@(step.StepNumber) @step.Title</span>
+                    </div>
+                    <div class="bp-mobile-card-body">
+                        <h4 class="bp-mobile-card-subtitle">@step.Subtitle</h4>
+                        <p class="bp-mobile-card-desc">@step.Description</p>
+                        <div class="bp-mobile-card-meta">
+                            <span class="bp-meta-pill">🌡️ @step.TemperatureSpec</span>
+                            <span class="bp-meta-pill">🛡️ @step.CertificationStandard</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private IReadOnlyList<QualityStep> steps = new List<QualityStep>();
+    private int activeStepIndex = 0;
+    private bool isChanging = false;
+    private DotNetObjectReference<FieldToWorld>? objRef;
+
+    protected override void OnInitialized()
+    {
+        steps = Quality.GetProcessSteps();
+        activeStepIndex = Math.Clamp(State.ActiveProcessStep - 1, 0, steps.Count - 1);
+        State.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange()
+    {
+        var targetIndex = Math.Clamp(State.ActiveProcessStep - 1, 0, steps.Count - 1);
+        if (targetIndex != activeStepIndex)
+        {
+            activeStepIndex = targetIndex;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesTimeline.initScrollObserver", "proceso", objRef);
+            }
+            catch
+            {
+                // Graceful fallback if script not ready
+            }
+        }
+    }
+
+    private async Task SetActiveStep(int index)
+    {
+        if (index == activeStepIndex || index < 0 || index >= steps.Count) return;
+
+        isChanging = true;
+        StateHasChanged();
+
+        await Task.Delay(140);
+        activeStepIndex = index;
+        State.SetActiveProcessStep(steps[index].StepNumber);
+        isChanging = false;
+        StateHasChanged();
+    }
+
+    private void NextStep()
+    {
+        if (activeStepIndex < steps.Count - 1)
+        {
+            _ = SetActiveStep(activeStepIndex + 1);
+        }
+    }
+
+    private void PrevStep()
+    {
+        if (activeStepIndex > 0)
+        {
+            _ = SetActiveStep(activeStepIndex - 1);
+        }
+    }
+
+    [JSInvokable]
+    public void OnScrollStepChanged(int stepNumber)
+    {
+        var index = Math.Clamp(stepNumber - 1, 0, steps.Count - 1);
+        if (index != activeStepIndex)
+        {
+            activeStepIndex = index;
+            State.SetActiveProcessStep(steps[index].StepNumber);
+            StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        State.OnChange -= HandleStateChange;
+        if (objRef != null)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesTimeline.destroyScrollObserver", "proceso");
+                objRef.Dispose();
+            }
+            catch
+            {
+                // Teardown cleanup
+            }
+        }
+    }
+}

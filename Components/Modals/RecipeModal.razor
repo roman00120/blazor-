@@ -1,0 +1,119 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.SelectedRecipeModal != null)
+{
+    var recipe = AppState.SelectedRecipeModal;
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseRecipeModal">
+        <div class="bp-modal-box" style="max-width: 800px;" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseRecipeModal">✕</button>
+
+            <div style="display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: center; margin-bottom: 1.5rem;">
+                <img src="@recipe.ImageUrl" alt="@recipe.Title" style="width: 100%; aspect-ratio: 4/3; border-radius: var(--bp-radius-md); object-fit: cover; box-shadow: 0 12px 30px rgba(0,0,0,0.5);" />
+                
+                <div>
+                    <span style="font-family: var(--bp-font-display); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan); text-transform: uppercase;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => recipe.CategoryTagEn,
+                            "FR" => recipe.CategoryTagFr,
+                            _ => recipe.CategoryTag
+                        })
+                    </span>
+                    <h3 style="font-size: 2.2rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => recipe.TitleEn,
+                            "FR" => recipe.TitleFr,
+                            _ => recipe.Title
+                        })
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.96rem; margin-top: 0.4rem; line-height: 1.6;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => recipe.DescriptionEn,
+                            "FR" => recipe.DescriptionFr,
+                            _ => recipe.Description
+                        })
+                    </p>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.85rem; color: var(--bp-cyan); font-weight: 600;">
+                        <span>⏱️ Prep: @recipe.PrepTime</span>
+                        <span>🔥 Cocción: @recipe.CookTime</span>
+                        <span>🍽️ Porciones: @recipe.Servings</span>
+                        <span>⚡ @recipe.Calories kcal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingredients checklist -->
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md); padding: 1.2rem; margin-bottom: 1.4rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan); text-transform: uppercase; margin-bottom: 0.8rem;">
+                    @GetText("Ingredientes Frescos", "Fresh Ingredients", "Ingrédients Frais")
+                </h4>
+
+                @{
+                    var ings = AppState.CurrentLanguage switch {
+                        "EN" => recipe.IngredientsEn,
+                        "FR" => recipe.IngredientsFr,
+                        _ => recipe.Ingredients
+                    };
+                }
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+                    @foreach (var ing in ings)
+                    {
+                        <label style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: rgba(255,255,255,0.9); cursor: pointer;">
+                            <input type="checkbox" style="accent-color: var(--bp-cyan);" />
+                            <span>@ing</span>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <!-- Step-by-step instructions -->
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.95rem; color: #ffffff; text-transform: uppercase; margin-bottom: 0.8rem;">
+                    @GetText("Paso a Paso", "Instructions", "Préparation")
+                </h4>
+
+                @{
+                    var steps = AppState.CurrentLanguage switch {
+                        "EN" => recipe.StepsEn,
+                        "FR" => recipe.StepsFr,
+                        _ => recipe.Steps
+                    };
+                }
+                <ol style="padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem;">
+                    @foreach (var step in steps)
+                    {
+                        <li style="font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.55;">
+                            @step
+                        </li>
+                    }
+                </ol>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem;">
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="AppState.CloseRecipeModal">
+                    @GetText("¡Listo para cocinar!", "Ready to Cook!", "C'est parti !")
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

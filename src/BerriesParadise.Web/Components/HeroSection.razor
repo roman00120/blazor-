@@ -1,0 +1,61 @@
+@inject WebUiStateService State
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<section class="bp-hero-section" id="hero-section">
+    <!-- LAYER 1 & 2: Full-bleed Photographic Background & Atmospheric Multi-stop Gradient -->
+    <HeroBackground />
+
+    <!-- LAYER 3 & 4: Three.js Transparent Dew Droplets & Crystalline Depth -->
+    <ThreeScene ContainerId="bp-hero-three-scene" EffectType="hero" CssClass="bp-hero-three-container" />
+
+    <!-- HERO MAIN CONTAINER (Desktop 3-column editorial layout: Left Typography, Center Berries, Right Glass Stats) -->
+    <div class="bp-hero-container">
+        <!-- LAYER 5: Editorial Content & Typography (Left-aligned, 40-45% width on desktop) -->
+        <HeroContent />
+
+        <!-- LAYER 6: 3D Floating Berry Composition with Physics-grade Parallax -->
+        <HeroBerryScene />
+
+        <!-- LAYER 7: Compact Glass Statistics Panels (Right side on desktop, compact on mobile) -->
+        <HeroStats />
+    </div>
+
+    <!-- LAYER 8: Bottom Center Scroll Indicator -->
+    <HeroScrollIndicator />
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesHero.initParallax", "hero-section");
+            }
+            catch
+            {
+                // Graceful degradation when JS runtime is restricted or test runner
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+        try
+        {
+            _ = JSRuntime.InvokeVoidAsync("berriesHero.destroyParallax", "hero-section");
+        }
+        catch
+        {
+            // Ignore during disposal
+        }
+    }
+}

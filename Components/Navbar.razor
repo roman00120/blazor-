@@ -1,0 +1,68 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+<header class="bp-navbar-wrapper @(isScrolled ? "scrolled" : "")">
+    <div class="bp-nav-container">
+        <a href="#" class="bp-brand-logo">
+            <img src="images/berries-paradise-logo.png" alt="Berries Paradise" />
+        </a>
+
+        <ul class="bp-nav-links">
+            <li><a href="#productos" class="bp-nav-link">@GetText("Productos", "Products", "Produits")</a></li>
+            <li><a href="#calidad" class="bp-nav-link">@GetText("Excelencia y calidad", "Excellence & Quality", "Excellence & Qualité")</a></li>
+            <li><a href="#proceso" class="bp-nav-link">@GetText("Del Campo al Mundo", "Field to World", "Du Champ au Monde")</a></li>
+            <li><a href="#genetica" class="bp-nav-link">@GetText("Genética", "Genetics", "Génétique")</a></li>
+            <li><a href="#inspiracion" class="bp-nav-link">@GetText("Inspiración", "Inspiration", "Inspiration")</a></li>
+            <li><a href="#contacto" class="bp-nav-link">@GetText("Contacto", "Contact", "Contact")</a></li>
+        </ul>
+
+        <div class="bp-nav-actions">
+            <!-- Language switcher -->
+            <div class="bp-lang-switcher">
+                <button type="button" class="bp-lang-btn @(AppState.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => AppState.SetLanguage("ES")'>ES</button>
+                <span>/</span>
+                <button type="button" class="bp-lang-btn @(AppState.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => AppState.SetLanguage("EN")'>EN</button>
+                <span>/</span>
+                <button type="button" class="bp-lang-btn @(AppState.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => AppState.SetLanguage("FR")'>FR</button>
+            </div>
+
+            <!-- Search Icon -->
+            <button type="button" class="bp-search-btn" title="Buscar" @onclick="AppState.OpenSearchModal">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+
+            <!-- Sales CTA button -->
+            <button type="button" class="bp-btn bp-btn-yellow" @onclick="AppState.OpenContactModal">
+                <span>@GetText("Contactar ventas", "Contact Sales", "Contacter Ventes")</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+@code {
+    private bool isScrolled = false;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

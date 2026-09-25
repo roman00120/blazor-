@@ -1,0 +1,136 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-global-section">
+    <div class="bp-global-container">
+        <!-- Intro Column -->
+        <div class="bp-global-intro">
+            <h2>
+                @GetText("PRESENCIA", "GLOBAL", "PRÉSENCE")
+                <span>@GetText("GLOBAL", "REACH", "MONDIALE")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Llevamos berries de la más alta calidad a mercados alrededor del mundo, cumpliendo las certificaciones fitosanitarias más rigurosas del planeta.",
+                    "We deliver the highest quality berries to demanding global markets, meeting the world's most stringent phytosanitary certifications.",
+                    "Nous approvisionnons les marchés les plus exigeants de la planète selon les certifications phytosanitaires les plus strictes."
+                )
+            </p>
+        </div>
+
+        <!-- Center: Interactive SVG World Map -->
+        <div class="bp-global-map-wrap">
+            <svg class="bp-map-svg" viewBox="0 0 1000 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.35" />
+                        <stop offset="100%" stop-color="#0077b6" stop-opacity="0.15" />
+                    </linearGradient>
+                    <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#00c2ff" stop-opacity="0.9" />
+                        <stop offset="100%" stop-color="#00c2ff" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <!-- Stylized world continents simplified paths -->
+                <!-- North America -->
+                <path d="M120 70 Q 220 50 260 110 T 220 220 Q 180 250 140 210 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <!-- South America -->
+                <path d="M260 250 Q 320 280 300 380 T 250 440 Q 220 380 230 300 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <!-- Europe -->
+                <path d="M480 80 Q 560 70 570 140 T 490 190 Q 450 160 460 110 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <!-- Africa -->
+                <path d="M480 200 Q 570 210 560 320 T 500 410 Q 440 330 460 230 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <!-- Asia -->
+                <path d="M580 70 Q 750 60 840 140 T 780 260 Q 660 260 600 170 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <!-- Australia -->
+                <path d="M780 320 Q 870 310 860 390 T 780 410 Q 750 370 760 330 Z" fill="url(#mapGradient)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+                <!-- Glowing Trade Flight Routes from Mexico Hub -->
+                <path d="M200 180 Q 350 90 510 120" stroke="#00c2ff" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 6">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="4s" repeatCount="indefinite" />
+                </path>
+                <path d="M200 180 Q 500 40 760 130" stroke="#00c2ff" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 6">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="5s" repeatCount="indefinite" />
+                </path>
+                <path d="M200 180 Q 230 280 270 340" stroke="#00c2ff" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="4 4">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="4s" repeatCount="indefinite" />
+                </path>
+
+                <!-- Hub Markers -->
+                <!-- Origin: Mexico Production Center -->
+                <circle cx="200" cy="180" r="14" fill="url(#hubGlow)">
+                    <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="200" cy="180" r="5" fill="#e2f952" stroke="#06121e" stroke-width="2"/>
+
+                <!-- Target Hubs -->
+                <circle cx="220" cy="120" r="5" fill="#00c2ff" stroke="#fff" stroke-width="1.5"/> <!-- USA/Canada -->
+                <circle cx="510" cy="120" r="5" fill="#00c2ff" stroke="#fff" stroke-width="1.5"/> <!-- Europe -->
+                <circle cx="760" cy="130" r="5" fill="#00c2ff" stroke="#fff" stroke-width="1.5"/> <!-- Japan / Asia -->
+                <circle cx="620" cy="200" r="5" fill="#00c2ff" stroke="#fff" stroke-width="1.5"/> <!-- Middle East -->
+            </svg>
+        </div>
+
+        <!-- Right Stats Column & Berry visual -->
+        <div class="bp-global-stats-wrap">
+            <div class="bp-global-stat-box">
+                <div class="bp-stat-icon-circ">
+                    <!-- Diamond -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 3h12l4 6-10 13L2 9z"></path>
+                    </svg>
+                </div>
+                <div class="bp-stat-num">42+</div>
+                <div class="bp-stat-sub">@GetText("SKUs para retail", "Retail SKUs", "SKUs retail")</div>
+            </div>
+
+            <div class="bp-global-stat-box">
+                <div class="bp-stat-icon-circ">
+                    <!-- Globe -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div class="bp-stat-num">19+</div>
+                <div class="bp-stat-sub">@GetText("Países de exportación", "Export Countries", "Pays d'export")</div>
+            </div>
+
+            <div class="bp-global-stat-box">
+                <div class="bp-stat-icon-circ">
+                    <!-- Shield -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="bp-stat-num">Mercos</div>
+                <div class="bp-stat-sub">@GetText("Globales", "Global Reach", "Mondiaux")</div>
+            </div>
+
+            <img src="images/categories/zarzamoras.jpg" alt="Berries Paradise Freshness" class="bp-global-berry-img" style="border-radius: 50%; object-fit: cover; width: 80px; height: 80px;" />
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

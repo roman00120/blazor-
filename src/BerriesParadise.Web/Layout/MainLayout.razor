@@ -1,0 +1,21 @@
+@inherits LayoutComponentBase
+
+<div class="bp-app-layout">
+    <a href="#main-content" class="bp-skip-link">Saltar al contenido principal</a>
+    <MainNavigation />
+
+    <main class="bp-main-content" id="main-content">
+        @Body
+    </main>
+
+    <SiteFooter />
+
+    <!-- Interactive Modals -->
+    <ContactSalesModal />
+    <VideoModal />
+    <ProductDetailModal />
+    <BerryDetailModal />
+    <GeneticsDetailModal />
+    <RecipeDetailModal />
+    <SearchModal />
+</div>

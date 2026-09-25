@@ -1,0 +1,146 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.IsSearchModalOpen)
+{
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseSearchModal">
+        <div class="bp-modal-box" style="max-width: 640px;" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseSearchModal">✕</button>
+
+            <h3 style="font-size: 1.6rem; color: #ffffff; margin-bottom: 1rem;">
+                @GetText("Buscar en", "Search", "Rechercher dans") <span style="color: var(--bp-cyan);">Berries Paradise</span>
+            </h3>
+
+            <div style="position: relative; margin-bottom: 1.5rem;">
+                <input type="text" 
+                       class="bp-form-input" 
+                       placeholder="@GetText("Escribe un producto, genética o receta (ej. Big Delight, Sekoya, Pancakes)...", "Type a product, genetics, or recipe (e.g. Big Delight, Sekoya, Pancakes)...", "Recherchez un produit, variété ou recette...")" 
+                       value="@AppState.SearchQuery" 
+                       @oninput="HandleSearchInput"
+                       autofocus />
+            </div>
+
+            <!-- Search Results -->
+            @if (!string.IsNullOrWhiteSpace(AppState.SearchQuery))
+            {
+                var query = AppState.SearchQuery.Trim().ToLowerInvariant();
+                var products = DataService.GetProducts().Where(p => p.Name.ToLowerInvariant().Contains(query) || p.BerryType.ToLowerInvariant().Contains(query)).ToList();
+                var genetics = DataService.GetGenetics().Where(g => g.Name.ToLowerInvariant().Contains(query) || g.BerryType.ToLowerInvariant().Contains(query)).ToList();
+                var recipes = DataService.GetRecipes().Where(r => r.Title.ToLowerInvariant().Contains(query) || r.Description.ToLowerInvariant().Contains(query)).ToList();
+
+                var hasResults = products.Any() || genetics.Any() || recipes.Any();
+
+                if (!hasResults)
+                {
+                    <div style="text-align: center; padding: 2rem 0; color: rgba(255,255,255,0.6);">
+                        @GetText("No se encontraron resultados para tu búsqueda.", "No results found for your query.", "Aucun résultat trouvé.")
+                    </div>
+                }
+                else
+                {
+                    <div style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
+                        @if (products.Any())
+                        {
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@GetText("Productos", "Products", "Produits")</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+                                    @foreach (var p in products)
+                                    {
+                                        <div class="bp-product-selector-item" @onclick="() => SelectProduct(p)">
+                                            <img src="@p.ClamshellImage" alt="@p.Name" class="bp-thumb-mini" />
+                                            <div>
+                                                <div style="font-weight: 700; color: #fff;">@p.Name</div>
+                                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">@p.Subtitle</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (genetics.Any())
+                        {
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@GetText("Genética Varietal", "Varietal Genetics", "Génétique")</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+                                    @foreach (var g in genetics)
+                                    {
+                                        <div class="bp-product-selector-item" @onclick="() => SelectGenetics(g)">
+                                            <img src="@g.ImageUrl" alt="@g.Name" class="bp-thumb-mini" />
+                                            <div>
+                                                <div style="font-weight: 700; color: #fff;">@g.Name</div>
+                                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">@g.BerryType</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (recipes.Any())
+                        {
+                            <div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@GetText("Recetas", "Recipes", "Recettes")</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+                                    @foreach (var r in recipes)
+                                    {
+                                        <div class="bp-product-selector-item" @onclick="() => SelectRecipe(r)">
+                                            <img src="@r.ImageUrl" alt="@r.Title" class="bp-thumb-mini" />
+                                            <div>
+                                                <div style="font-weight: 700; color: #fff;">@r.Title</div>
+                                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">@r.CategoryTag</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void HandleSearchInput(ChangeEventArgs e)
+    {
+        AppState.SetSearchQuery(e.Value?.ToString() ?? "");
+    }
+
+    private void SelectProduct(ProductItem p)
+    {
+        AppState.SetSelectedProduct(p);
+        AppState.CloseSearchModal();
+    }
+
+    private void SelectGenetics(GeneticsVariety g)
+    {
+        AppState.CloseSearchModal();
+        AppState.OpenGeneticsModal(g);
+    }
+
+    private void SelectRecipe(RecipeItem r)
+    {
+        AppState.CloseSearchModal();
+        AppState.OpenRecipeModal(r);
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,67 @@
+@inject CompanyInformation CompanyInfo
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-final-cta-section" id="contacto">
+    <!-- Dark Cinematic Background with Animated Ambient Glow & Depth -->
+    <div class="bp-final-cta-backdrop" aria-hidden="true">
+        <div class="bp-cta-animated-glow glow-1"></div>
+        <div class="bp-cta-animated-glow glow-2"></div>
+        <div class="bp-cta-noise-overlay"></div>
+    </div>
+
+    <div class="bp-final-cta-container">
+        <!-- Close-up Blueberry with Subtle Depth and Floating Animation -->
+        <div class="bp-cta-visual-stage fade-up" aria-hidden="true">
+            <div class="bp-cta-blueberry-halo"></div>
+            <img src="images/hero-blueberry-clean.png" 
+                 alt="Berries Paradise Premium Quality" 
+                 class="bp-cta-blueberry-img" 
+                 loading="lazy" />
+        </div>
+
+        <!-- Concluding Editorial Narrative -->
+        <div class="bp-cta-content-stage">
+            <span class="bp-section-kicker fade-up">@State.T("cta.kicker")</span>
+
+            <h2 class="bp-final-headline fade-up delay-1">
+                @State.T("cta.title1")<br />
+                <span class="highlight-cyan">@State.T("cta.title2")</span>
+            </h2>
+
+            <p class="bp-final-supporting-text fade-up delay-2">
+                @State.T("cta.subtitle")
+            </p>
+
+            <div class="bp-final-cta-actions fade-up delay-3">
+                <a href="#catalogo" class="bp-btn bp-btn-outline-white">
+                    <span>@State.T("cta.btnProducts")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="State.OpenContactModal">
+                    <span>@State.T("cta.btnSales")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

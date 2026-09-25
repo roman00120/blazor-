@@ -1,0 +1,97 @@
+@inject WebUiStateService State
+@implements IDisposable
+
+@if (State.SelectedProductModal != null)
+{
+    var product = State.SelectedProductModal;
+    <div class="bp-modal-backdrop" @onclick="State.CloseProductModal" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="bp-modal-box bp-product-modal-box" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseProductModal" aria-label="Cerrar ventana">✕</button>
+
+            <div class="bp-modal-product-layout">
+                <div class="bp-modal-media-box">
+                    <img src="@(string.IsNullOrEmpty(product.ClamshellMockupUrl) ? "images/products/big-delight-clamshell-hd.png" : product.ClamshellMockupUrl)" 
+                         alt="@product.Name - @product.BerryName" 
+                         class="bp-modal-product-img" />
+                </div>
+                
+                <div class="bp-modal-info-box">
+                    <span class="bp-modal-tagline" style="font-family: var(--bp-font-display, var(--font-display)); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan, #08B8E8); text-transform: uppercase;">
+                        @product.BerryName
+                    </span>
+                    <h3 id="product-modal-title" style="font-size: 2.2rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem; line-height: 1.05;">
+                        @product.Name
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.96rem; margin-top: 0.5rem; line-height: 1.55;">
+                        @product.Description
+                    </p>
+                </div>
+            </div>
+
+            <!-- Three Feature Specifications -->
+            <div class="bp-modal-specs-grid">
+                <div style="background: rgba(255, 255, 255, 0.04); padding: 0.9rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <span style="display: block; font-size: 0.72rem; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 3px;">Mayor tamaño</span>
+                    <strong style="font-size: 1.1rem; color: #ffffff;">@product.SizeMetric</strong>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.04); padding: 0.9rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <span style="display: block; font-size: 0.72rem; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 3px;">Sabor</span>
+                    <strong style="font-size: 1.1rem; color: var(--bp-cyan, #08B8E8);">@product.FlavorMetric</strong>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.04); padding: 0.9rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <span style="display: block; font-size: 0.72rem; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 3px;">Presentación</span>
+                    <strong style="font-size: 1.1rem; color: #ffffff;">@product.PackagingMetric</strong>
+                </div>
+            </div>
+
+            <!-- Retail Packaging & Certifications Detail -->
+            <div class="bp-modal-card-note" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md, 12px); padding: 1.2rem; margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan, #08B8E8); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.06em;">
+                    Formatos Comerciales & Retail
+                </h4>
+                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.5;">
+                    Disponible en clamshell de 6 oz, 11 oz, 18 oz y caja master para exportación aérea y marítima refrigerada con atmósfera controlada.
+                </p>
+            </div>
+
+            <div class="bp-modal-footer-row">
+                <span class="bp-modal-disclaimer" style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">Disponibilidad para importación internacional</span>
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="GoToSales">
+                    <span>Cotizar este producto</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            State.CloseProductModal();
+        }
+    }
+
+    private void GoToSales()
+    {
+        State.CloseProductModal();
+        State.OpenContactModal();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

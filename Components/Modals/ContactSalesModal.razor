@@ -1,0 +1,157 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.IsContactModalOpen)
+{
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseContactModal">
+        <div class="bp-modal-box" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseContactModal">✕</button>
+
+            @if (isSubmitted)
+            {
+                <div style="text-align: center; padding: 2rem 0;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(0, 194, 255, 0.15); border: 2px solid var(--bp-cyan); color: var(--bp-cyan); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #ffffff;">@GetText("¡Solicitud Recibida!", "Request Received!", "Demande Reçue !")</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8); max-width: 480px; margin: 0 auto 1.5rem auto;">
+                        @GetText(
+                            "Un director comercial de Berries Paradise se pondrá en contacto contigo en menos de 24 horas con nuestro catálogo de cotizaciones y disponibilidad.",
+                            "A Berries Paradise commercial representative will contact you within 24 hours with our pricing catalog and volume availability.",
+                            "Un responsable commercial de Berries Paradise vous contactera sous 24 heures pour vous transmettre nos disponibilités et tarifs."
+                        )
+                    </p>
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="ResetForm">@GetText("Entendido", "Got it", "Fermer")</button>
+                </div>
+            }
+            else
+            {
+                <h3 style="font-size: 2rem; margin-bottom: 0.4rem; color: #ffffff;">
+                    @GetText("Contactar a", "Contact", "Contacter")
+                    <span style="color: var(--bp-cyan);">@GetText("Ventas & Distribución", "Sales & Distribution", "Ventes & Distribution")</span>
+                </h3>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; margin-bottom: 1.8rem;">
+                    @GetText(
+                        "Conéctate directamente con nuestro equipo de exportación para programas retail, mayoreo y abasto internacional.",
+                        "Directly connect with our export logistics team for retail programs, wholesale volumes, and international shipping.",
+                        "Prenez contact directement avec notre équipe export pour programmes grande distribution et gros volumes."
+                    )
+                </p>
+
+                <form @onsubmit="HandleSubmit">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("Nombre Completo *", "Full Name *", "Nom Complet *")</label>
+                            <input type="text" required class="bp-form-input" placeholder="Ej. Roberto Mendoza" @bind="name" />
+                        </div>
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("Empresa / Retailer *", "Company / Retailer *", "Société / Distributeur *")</label>
+                            <input type="text" required class="bp-form-input" placeholder="Ej. Whole Foods / Metro" @bind="company" />
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("Correo Corporativo *", "Corporate Email *", "Email Professionnel *")</label>
+                            <input type="email" required class="bp-form-input" placeholder="roberto@company.com" @bind="email" />
+                        </div>
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("País de Destino *", "Destination Country *", "Pays de Destination *")</label>
+                            <select class="bp-form-select" @bind="country">
+                                <option value="Estados Unidos">Estados Unidos / USA</option>
+                                <option value="Canadá">Canadá / Canada</option>
+                                <option value="Reino Unido">Reino Unido / UK</option>
+                                <option value="Unión Europea">Unión Europea / EU</option>
+                                <option value="Japón">Japón / Japan</option>
+                                <option value="Emiratos Árabes">Emiratos Árabes Unidos</option>
+                                <option value="México">México</option>
+                                <option value="Otro">Otro mercado internacional</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("Producto de Interés", "Berry of Interest", "Fruit d'Intérêt")</label>
+                            <select class="bp-form-select" @bind="berryType">
+                                <option value="Arándanos (Big Delight / Jumbo)">Arándanos (Big Delight / Jumbo)</option>
+                                <option value="Frambuesas (Amalia® / Orgánica)">Frambuesas (Amalia® / Orgánica)</option>
+                                <option value="Zarzamoras (Legacy)">Zarzamoras (Legacy)</option>
+                                <option value="Fresas Selección">Fresas Selección</option>
+                                <option value="Mix Multi-Berry Completo">Mix Multi-Berry Completo</option>
+                            </select>
+                        </div>
+
+                        <div class="bp-form-group">
+                            <label class="bp-form-label">@GetText("Volumen Estimado", "Estimated Volume", "Volume Estimé")</label>
+                            <select class="bp-form-select" @bind="volume">
+                                <option value="1 a 5 Pallets / Semana">1 a 5 Pallets / Semana</option>
+                                <option value="1 a 3 Cargas completas (Truckload)">1 a 3 Cargas completas (Truckload)</option>
+                                <option value="Programa Anual de Temporada">Programa Anual de Temporada</option>
+                                <option value="Carga Aérea Spot">Carga Aérea Spot</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bp-form-group">
+                        <label class="bp-form-label">@GetText("Detalles de Requerimiento o Especificaciones", "Specifications or Requirements", "Détails de votre Demande")</label>
+                        <textarea rows="3" class="bp-form-textarea" placeholder="@GetText("Especifica calibres, tipo de clamshell o ventana de entrega requerida...", "Specify calibers, packaging format or required delivery window...", "Précisez vos calibres, types d'emballage ou calendrier de livraison...")" @bind="notes"></textarea>
+                    </div>
+
+                    <button type="submit" class="bp-btn bp-btn-yellow" style="width: 100%; margin-top: 0.5rem;">
+                        <span>@GetText("Enviar Solicitud a Exportaciones", "Submit Export Inquiry", "Envoyer ma Demande")</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private string name = "";
+    private string company = "";
+    private string email = "";
+    private string country = "Estados Unidos";
+    private string berryType = "Arándanos (Big Delight / Jumbo)";
+    private string volume = "1 a 3 Cargas completas (Truckload)";
+    private string notes = "";
+    private bool isSubmitted = false;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void HandleSubmit()
+    {
+        isSubmitted = true;
+    }
+
+    private void ResetForm()
+    {
+        isSubmitted = false;
+        name = "";
+        company = "";
+        email = "";
+        notes = "";
+        AppState.CloseContactModal();
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

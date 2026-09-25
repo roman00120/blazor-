@@ -1,0 +1,207 @@
+@inject RecipeCatalog Recipes
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-recipes-section" id="inspiracion">
+    <div class="bp-recipes-container">
+        <!-- Editorial Header Row -->
+        <div class="bp-recipes-header-row">
+            <div class="bp-recipes-intro">
+                <span class="bp-section-kicker fade-up">@State.T("recipes.kicker")</span>
+                <h2 class="bp-section-headline fade-up delay-1">
+                    @State.T("recipes.title1")<br />
+                    <span class="highlight-cyan">@State.T("recipes.title2")</span>
+                </h2>
+                <p class="bp-section-subheading fade-up delay-2">
+                    @State.T("recipes.subtitle")
+                </p>
+            </div>
+
+            <!-- Action Buttons: VER TODAS LAS RECETAS -->
+            <div class="bp-recipes-header-cta fade-up delay-3">
+                <button type="button" class="bp-btn bp-btn-outline-white" @onclick="() => State.OpenRecipeModal(CurrentRecipe)">
+                    <span>@State.T("recipes.btnAll")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Magazine Editorial Showcase Stage -->
+        <div class="bp-magazine-showcase-stage fade-up delay-2">
+            <!-- LEFT: Large Food Photograph -->
+            <div class="bp-magazine-media-wrap" @onclick="() => State.OpenRecipeModal(CurrentRecipe)" role="button" tabindex="0" title="Ver receta completa de @CurrentRecipe.Title">
+                <div class="bp-magazine-photo-box @(isTransitioning ? "transitioning" : "")">
+                    <img src="@CurrentRecipe.ImageUrl" alt="@CurrentRecipe.Title" class="bp-magazine-img" loading="lazy" />
+                    <div class="bp-magazine-overlay"></div>
+                </div>
+
+                <!-- Floating Prep & Category Badge -->
+                <div class="bp-magazine-floating-tag">
+                    <span class="bp-tag-cat">@CurrentRecipe.Category</span>
+                    <span class="bp-tag-time">⏱️ @(CurrentRecipe.PrepTimeMinutes + CurrentRecipe.CookTimeMinutes) min</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: Editorial Story & Recipe Specs -->
+            <div class="bp-magazine-content-wrap @(isTransitioning ? "transitioning" : "")">
+                <div class="bp-magazine-nav-top">
+                    <span class="bp-magazine-kicker">@State.T("recipes.editorial")</span>
+                    <!-- 01 / 08 Counter -->
+                    <div class="bp-magazine-counter">
+                        <span class="bp-counter-current">@((currentIndex + 1).ToString("D2"))</span>
+                        <span class="bp-counter-sep">/</span>
+                        <span class="bp-counter-total">@totalRecipes.ToString("D2")</span>
+                    </div>
+                </div>
+
+                <h3 class="bp-magazine-title">@CurrentRecipe.Title.ToUpper()</h3>
+
+                <p class="bp-magazine-description">
+                    @CurrentRecipe.Description
+                </p>
+
+                <!-- Culinary Highlights Row -->
+                <div class="bp-magazine-specs-grid">
+                    <div class="bp-mag-spec-card">
+                        <span class="spec-label">Porciones</span>
+                        <strong class="spec-val">@CurrentRecipe.Servings personas</strong>
+                    </div>
+                    <div class="bp-mag-spec-card">
+                        <span class="spec-label">Calorías</span>
+                        <strong class="spec-val">@CurrentRecipe.Calories kcal</strong>
+                    </div>
+                    <div class="bp-mag-spec-card">
+                        <span class="spec-label">Ingredientes</span>
+                        <strong class="spec-val">@CurrentRecipe.Ingredients.Count items frescos</strong>
+                    </div>
+                </div>
+
+                <!-- Actions & Navigation: VER RECETA → and 01/08 prev/next controls -->
+                <div class="bp-magazine-actions-bar">
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="() => State.OpenRecipeModal(CurrentRecipe)">
+                        <span>@State.T("recipes.btnView")</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <!-- Previous / Next Controls -->
+                    <div class="bp-magazine-stepper-controls">
+                        <button type="button" 
+                                class="bp-mag-nav-arrow" 
+                                @onclick="PrevRecipe" 
+                                aria-label="Receta anterior"
+                                title="Receta anterior">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+
+                        <button type="button" 
+                                class="bp-mag-nav-arrow" 
+                                @onclick="NextRecipe" 
+                                aria-label="Receta siguiente"
+                                title="Receta siguiente">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile: Swipeable Recipe Carousel -->
+        <div class="bp-mobile-recipe-carousel" role="region" aria-label="Carrusel de recetas gastronómicas">
+            @for (int i = 0; i < allRecipes.Count; i++)
+            {
+                var r = allRecipes[i];
+                var itemIndex = i;
+                <div class="bp-mobile-recipe-card" @onclick="() => State.OpenRecipeModal(r)">
+                    <div class="bp-mobile-recipe-media">
+                        <img src="@r.ImageUrl" alt="@r.Title" loading="lazy" />
+                        <span class="bp-mobile-recipe-pill">@((itemIndex + 1).ToString("D2")) / @totalRecipes.ToString("D2")</span>
+                    </div>
+                    <div class="bp-mobile-recipe-body">
+                        <span class="bp-mobile-recipe-cat">@r.Category</span>
+                        <h4 class="bp-mobile-recipe-title">@r.Title</h4>
+                        <p class="bp-mobile-recipe-desc">@r.Description</p>
+                        <div class="bp-mobile-recipe-link">
+                            <span>VER RECETA</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private IReadOnlyList<Recipe> allRecipes = new List<Recipe>();
+    private int currentIndex = 0;
+    private int totalRecipes = 8;
+    private bool isTransitioning = false;
+
+    private Recipe CurrentRecipe => allRecipes.ElementAtOrDefault(currentIndex) 
+                                   ?? Recipes.GetFeatured();
+
+    protected override void OnInitialized()
+    {
+        allRecipes = Recipes.GetAll();
+        totalRecipes = allRecipes.Count;
+        currentIndex = Math.Clamp(State.ActiveRecipeIndex, 0, totalRecipes - 1);
+        State.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange()
+    {
+        if (State.ActiveRecipeIndex != currentIndex)
+        {
+            currentIndex = Math.Clamp(State.ActiveRecipeIndex, 0, totalRecipes - 1);
+            StateHasChanged();
+        }
+    }
+
+    private async Task SetRecipe(int index)
+    {
+        if (index == currentIndex || index < 0 || index >= totalRecipes) return;
+
+        isTransitioning = true;
+        StateHasChanged();
+
+        await Task.Delay(130);
+        currentIndex = index;
+        State.SetActiveRecipeIndex(index);
+        isTransitioning = false;
+        StateHasChanged();
+    }
+
+    private void NextRecipe()
+    {
+        var next = (currentIndex + 1) % totalRecipes;
+        _ = SetRecipe(next);
+    }
+
+    private void PrevRecipe()
+    {
+        var prev = (currentIndex - 1 + totalRecipes) % totalRecipes;
+        _ = SetRecipe(prev);
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= HandleStateChange;
+    }
+}

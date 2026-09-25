@@ -1,0 +1,89 @@
+@using BerriesParadise.Core.Models
+
+<div class="bp-stepper-track-wrap">
+    <div class="bp-stepper-line"></div>
+    @{
+        var progressPct = (ActiveStep - 1) * 25;
+    }
+    <div class="bp-stepper-progress" style="width: @(progressPct)%;"></div>
+
+    <div class="bp-stepper-nodes">
+        @foreach (var step in Steps)
+        {
+            var isActive = step.StepNumber == ActiveStep;
+
+            <button type="button" 
+                    class="bp-step-node @(isActive ? "active" : "")" 
+                    @onclick="() => HandleStepClick(step.StepNumber)">
+                <div class="bp-node-circle">
+                    @if (step.StepNumber == 1)
+                    {
+                        <!-- Cultivo / Sprout icon -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 20h10"></path>
+                            <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                            <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                        </svg>
+                    }
+                    else if (step.StepNumber == 2)
+                    {
+                        <!-- Cosecha / Harvest scissors/hands -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="6" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                        </svg>
+                    }
+                    else if (step.StepNumber == 3)
+                    {
+                        <!-- Selección y empaque / Tray -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16.5 9.4L7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55l8.95-5.16a1.78 1.78 0 0 0 0-3.1z"></path>
+                        </svg>
+                    }
+                    else if (step.StepNumber == 4)
+                    {
+                        <!-- Cadena de frío / Thermometer -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                        </svg>
+                    }
+                    else
+                    {
+                        <!-- Al mundo / Globe -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    }
+                </div>
+
+                <div class="bp-node-label-wrap">
+                    <span class="bp-node-num">0@(step.StepNumber)</span>
+                    <span class="bp-node-title">@step.Title</span>
+                </div>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<QualityStep> Steps { get; set; } = default!;
+
+    [Parameter]
+    public int ActiveStep { get; set; } = 1;
+
+    [Parameter]
+    public EventCallback<int> OnStepSelected { get; set; }
+
+    private async Task HandleStepClick(int stepNumber)
+    {
+        if (OnStepSelected.HasDelegate)
+        {
+            await OnStepSelected.InvokeAsync(stepNumber);
+        }
+    }
+}

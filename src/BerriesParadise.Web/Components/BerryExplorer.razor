@@ -1,0 +1,122 @@
+@inject BerryCatalog Berries
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-our-berries-section" id="nuestras-berries">
+    <div class="bp-our-berries-wrapper">
+        <!-- Section Header -->
+        <div class="bp-our-berries-header">
+            <div class="bp-our-berries-intro">
+                <span class="bp-section-kicker fade-up">@State.T("berries.kicker")</span>
+                <h2 class="bp-section-headline fade-up delay-1">
+                    @State.T("berries.title1")<br />
+                    <span class="highlight-cyan">@State.T("berries.title2")</span>
+                </h2>
+                <p class="bp-section-subheading fade-up delay-2">
+                    @State.T("berries.subtitle")
+                </p>
+            </div>
+
+            <div class="bp-our-berries-nav-hint fade-up delay-3">
+                <div class="bp-carousel-indicators" role="tablist" aria-label="Categorías de Berries">
+                    @foreach (var b in Berries.GetAll())
+                    {
+                        var isSel = (ActiveBerry?.Id == b.Id);
+                        <button type="button" 
+                                class="bp-indicator-pill @(isSel ? "active" : "")" 
+                                @onclick="() => SelectBerry(b)"
+                                role="tab"
+                                aria-selected="@(isSel ? "true" : "false")"
+                                aria-label="Ver @b.Name">
+                            <span class="bp-dot" style="background-color: @b.AccentColor;"></span>
+                            <span class="bp-lbl">@b.Name</span>
+                        </button>
+                    }
+                </div>
+
+                <a href="#catalogo" class="bp-btn bp-btn-outline-cyan">
+                    <span>@State.T("berries.btnPortfolio")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Premium Horizontal Visual Explorer (Desktop 4-column expandable strip / Mobile Touch Snap Carousel) -->
+        <div class="bp-berries-explorer-strip" role="region" aria-label="Explorador visual de Berries">
+            @foreach (var berry in Berries.GetAll())
+            {
+                <BerryCard Berry="berry" 
+                           IsActive="@(ActiveBerry?.Id == berry.Id)"
+                           OnClick="HandleBerrySelected"
+                           OnHover="HandleBerryHover" />
+            }
+        </div>
+
+        <!-- Dynamic In-Page Quick Information Detail Panel (Driven strictly by Blazor State) -->
+        @if (ActiveBerry != null)
+        {
+            <div class="bp-berry-preview-bar fade-in" style="--accent-tone: @ActiveBerry.AccentColor;">
+                <div class="bp-preview-meta">
+                    <span class="bp-preview-badge">@State.T("berries.badge")</span>
+                    <h4 class="bp-preview-title">@ActiveBerry.Name <span class="bp-preview-sci">(@ActiveBerry.ScientificName)</span></h4>
+                    <p class="bp-preview-desc">@ActiveBerry.Description</p>
+                </div>
+
+                <div class="bp-preview-stats">
+                    <div class="bp-preview-stat-item">
+                        <span class="stat-tag">@State.T("berries.availability")</span>
+                        <span class="stat-text">@ActiveBerry.Seasonality</span>
+                    </div>
+                    <div class="bp-preview-stat-item">
+                        <span class="stat-tag">@State.T("berries.benefit")</span>
+                        <span class="stat-text">@ActiveBerry.HealthBenefits.Split(',').FirstOrDefault()</span>
+                    </div>
+                </div>
+
+                <div class="bp-preview-cta">
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="() => State.OpenBerryModal(ActiveBerry)">
+                        <span>@State.T("berries.btnSheet")</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private Berry? ActiveBerry;
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+        ActiveBerry = Berries.GetAll().FirstOrDefault();
+    }
+
+    private void HandleBerryHover(Berry berry)
+    {
+        ActiveBerry = berry;
+    }
+
+    private void SelectBerry(Berry berry)
+    {
+        ActiveBerry = berry;
+    }
+
+    private void HandleBerrySelected(Berry berry)
+    {
+        ActiveBerry = berry;
+        State.OpenBerryModal(berry);
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

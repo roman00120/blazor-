@@ -1,0 +1,95 @@
+@using BerriesParadise.Core.Models
+
+<div class="bp-product-card @(IsFeatured ? "bp-card-featured" : "bp-card-standard") @(FruitThemeClass)" 
+     tabindex="0"
+     role="article"
+     aria-label="@Product.Line @Product.Fruit: @Product.Description">
+
+    <div class="bp-card-media-stage" @onclick="HandleQuickView" role="button" tabindex="0" title="Ver detalles de @Product.Line @Product.Fruit" style="cursor: pointer;">
+        <img src="@Product.ImageUrl" 
+             alt="@Product.Line @Product.Fruit" 
+             class="bp-card-product-img" 
+             loading="lazy" />
+        <div class="bp-card-media-gradient" aria-hidden="true"></div>
+        <div class="bp-card-badge-pill">
+            <span class="bp-card-line-tag">@Product.Line</span>
+        </div>
+    </div>
+
+    <div class="bp-card-content-area">
+        <div class="bp-card-header">
+            <h3 class="bp-card-fruit">@Product.Fruit</h3>
+            <span class="bp-card-subtitle-line">Línea @Product.Line</span>
+        </div>
+
+        <div class="bp-card-body">
+            <p class="bp-card-desc">@Product.Description</p>
+            
+            <div class="bp-card-footer">
+                @if (OnQuickView.HasDelegate)
+                {
+                    <button type="button" 
+                            class="bp-card-cta-link"
+                            @onclick="HandleQuickView"
+                            aria-label="Conoce más sobre @Product.Line @Product.Fruit">
+                        <span>CONOCE MÁS</span>
+                        <span class="bp-card-cta-arrow" aria-hidden="true">→</span>
+                    </button>
+                }
+                else
+                {
+                    <a href="@Product.Url" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="bp-card-cta-link"
+                       aria-label="Conoce más sobre @Product.Line @Product.Fruit">
+                        <span>CONOCE MÁS</span>
+                        <span class="bp-card-cta-arrow" aria-hidden="true">→</span>
+                    </a>
+                }
+
+                @if (OnQuickView.HasDelegate)
+                {
+                    <button type="button" 
+                            class="bp-card-quickview-btn" 
+                            @onclick="HandleQuickView"
+                            title="Ver detalles comerciales"
+                            aria-label="Ver detalles de @Product.Line @Product.Fruit">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Product Product { get; set; } = default!;
+
+    [Parameter]
+    public bool IsFeatured { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<Product> OnQuickView { get; set; }
+
+    private string FruitThemeClass => Product.BerryId switch
+    {
+        "arandanos" => "theme-blueberry",
+        "frambuesas" => "theme-raspberry",
+        "zarzamoras" => "theme-blackberry",
+        "fresas" => "theme-strawberry",
+        _ => "theme-blueberry"
+    };
+
+    private async Task HandleQuickView()
+    {
+        if (OnQuickView.HasDelegate)
+        {
+            await OnQuickView.InvokeAsync(Product);
+        }
+    }
+}

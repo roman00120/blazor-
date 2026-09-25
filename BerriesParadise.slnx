@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BerriesParadise.Content/BerriesParadise.Content.csproj" />
+    <Project Path="src/BerriesParadise.Core/BerriesParadise.Core.csproj" />
+    <Project Path="src/BerriesParadise.Mobile/BerriesParadise.Mobile.csproj" />
+    <Project Path="src/BerriesParadise.Web/BerriesParadise.Web.csproj" />
+  </Folder>
+</Solution>

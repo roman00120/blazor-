@@ -1,0 +1,163 @@
+@inject ProductCatalog Products
+@inject BerryCatalog Berries
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-product-portfolio-section" id="productos" role="region" aria-label="Portafolio de Productos Berries Paradise">
+    <div class="bp-portfolio-wrapper">
+        
+        <!-- SECTION INTRO: Editorial Header -->
+        <header class="bp-portfolio-intro">
+            <span class="bp-section-kicker">@State.T("product.kicker")</span>
+            <h2 class="bp-portfolio-headline">
+                @State.T("product.title1")<br />
+                <span class="highlight-cyan">@State.T("product.title2")</span>
+            </h2>
+            <p class="bp-portfolio-subheading">
+                @State.T("product.subtitle")
+            </p>
+        </header>
+
+        <!-- FRUIT NAVIGATION: Large Visual Selectors (Blueberries, Raspberries, Blackberries, Strawberries) -->
+        <nav class="bp-fruit-nav-container" aria-label="Seleccionar fruta">
+            <div class="bp-fruit-nav-carousel" role="tablist">
+                @foreach (var fruit in AvailableFruits)
+                {
+                    var isSelected = SelectedFruitId.Equals(fruit.Id, StringComparison.OrdinalIgnoreCase);
+                    var fruitBerry = Berries.GetById(fruit.Id);
+                    var fruitImg = fruitBerry?.ImageUrl ?? $"images/categories/{fruit.Id}.jpg";
+                    
+                    <button type="button" 
+                            class="bp-fruit-nav-item @(isSelected ? "active" : "") fruit-item-@fruit.Id"
+                            @onclick="() => SelectFruit(fruit.Id)"
+                            role="tab"
+                            aria-selected="@(isSelected ? "true" : "false")"
+                            aria-controls="portfolio-grid-@fruit.Id"
+                            id="tab-fruit-@fruit.Id">
+                        
+                        <div class="bp-fruit-nav-thumb-box">
+                            <img src="@fruitImg" alt="" class="bp-fruit-nav-thumb" loading="lazy" />
+                            <div class="bp-fruit-nav-overlay" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="bp-fruit-nav-info">
+                            <span class="bp-fruit-nav-name">@fruit.Name</span>
+                            <span class="bp-fruit-nav-count">
+                                @GetProductCountForFruit(fruit.Id) @(GetProductCountForFruit(fruit.Id) == 1 ? "opción" : "líneas")
+                            </span>
+                        </div>
+
+                        <span class="bp-fruit-nav-indicator" aria-hidden="true"></span>
+                    </button>
+                }
+            </div>
+        </nav>
+
+        <!-- ACTIVE FRUIT PORTFOLIO STAGE -->
+        <main class="bp-portfolio-grid-stage" id="portfolio-grid-@SelectedFruitId" role="tabpanel" aria-labelledby="tab-fruit-@SelectedFruitId">
+            
+            @if (CurrentFruitProducts.Count > 0)
+            {
+                <!-- Asymmetric Editorial Grid: Featured Product + Secondary Products Grid -->
+                <div class="bp-portfolio-asymmetric-grid @TransitionClass">
+                    
+                    <!-- Top Featured Row: When Blueberries is selected, Big Delight is the primary showcase -->
+                    @if (FeaturedProduct != null)
+                    {
+                        <div class="bp-featured-product-slot">
+                            <ProductCard Product="FeaturedProduct" 
+                                         IsFeatured="true" 
+                                         OnQuickView="HandleQuickView" />
+                        </div>
+                    }
+
+                    <!-- Secondary Products Row / Subgrid -->
+                    @if (SecondaryProducts.Count > 0)
+                    {
+                        <div class="bp-secondary-products-grid count-@SecondaryProducts.Count">
+                            @foreach (var prod in SecondaryProducts)
+                            {
+                                <div class="bp-secondary-product-slot">
+                                    <ProductCard Product="prod" 
+                                                 IsFeatured="false" 
+                                                 OnQuickView="HandleQuickView" />
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+</section>
+
+@code {
+    private record FruitNavItem(string Id, string Name);
+
+    private static readonly List<FruitNavItem> AvailableFruits = new()
+    {
+        new("arandanos", "ARÁNDANOS"),
+        new("frambuesas", "FRAMBUESAS"),
+        new("zarzamoras", "ZARZAMORAS"),
+        new("fresas", "FRESAS")
+    };
+
+    private string SelectedFruitId = "arandanos";
+    private string TransitionClass = "fade-in";
+    private List<Product> CurrentFruitProducts = new();
+    private Product? FeaturedProduct = null;
+    private List<Product> SecondaryProducts = new();
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+        LoadFruitProducts(SelectedFruitId);
+    }
+
+    private void SelectFruit(string fruitId)
+    {
+        if (SelectedFruitId.Equals(fruitId, StringComparison.OrdinalIgnoreCase)) return;
+
+        SelectedFruitId = fruitId;
+        LoadFruitProducts(fruitId);
+        StateHasChanged();
+    }
+
+    private void LoadFruitProducts(string fruitId)
+    {
+        var allFruitProducts = Products.GetByBerry(fruitId).ToList();
+        CurrentFruitProducts = allFruitProducts;
+
+        if (fruitId.Equals("arandanos", StringComparison.OrdinalIgnoreCase))
+        {
+            // Requirement: Make BIG DELIGHT the featured product initially
+            FeaturedProduct = allFruitProducts.FirstOrDefault(p => p.Id == "big-delight-arandanos") 
+                              ?? allFruitProducts.FirstOrDefault();
+
+            // Then show the other blueberry products beneath it:
+            // CLÁSICA, ORGÁNICA, LEGACY, LEGACY JUMBO BLUES
+            SecondaryProducts = allFruitProducts.Where(p => p.Id != FeaturedProduct?.Id).ToList();
+        }
+        else
+        {
+            // For other fruits, feature the first one (e.g. Clásica) and display the rest in the subgrid
+            FeaturedProduct = allFruitProducts.FirstOrDefault();
+            SecondaryProducts = allFruitProducts.Skip(1).ToList();
+        }
+    }
+
+    private int GetProductCountForFruit(string fruitId)
+    {
+        return Products.GetByBerry(fruitId).Count;
+    }
+
+    private void HandleQuickView(Product product)
+    {
+        State.OpenProductModal(product);
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

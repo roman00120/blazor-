@@ -1,0 +1,184 @@
+@inject QualityCatalog Quality
+@inject WebUiStateService State
+@implements IDisposable
+
+<section class="bp-quality-section" id="calidad">
+    <div class="bp-quality-container">
+        <!-- Section Header -->
+        <div class="bp-quality-header-row">
+            <div class="bp-quality-intro">
+                <span class="bp-section-kicker fade-up">@State.T("quality.kicker")</span>
+                <h2 class="bp-section-headline fade-up delay-1">
+                    @State.T("quality.title1")<br />
+                    <span class="highlight-cyan">@State.T("quality.title2")</span>
+                </h2>
+                <p class="bp-section-subheading fade-up delay-2">
+                    @State.T("quality.subtitle")
+                </p>
+            </div>
+
+            <!-- Global Quality Metric Badge -->
+            <div class="bp-quality-seal-badge fade-up delay-3">
+                <div class="bp-seal-icon" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <polyline points="9 12 11 14 15 10"></polyline>
+                    </svg>
+                </div>
+                <div class="bp-seal-text">
+                    <span class="bp-seal-title">@State.T("quality.cert")</span>
+                    <span class="bp-seal-subtitle">@State.T("quality.certSub")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Horizontal Step Selector (At the top of the explorer) -->
+        <div class="bp-quality-step-selector-wrap fade-up delay-2" role="tablist" aria-label="Selector de etapas de proceso de calidad">
+            @for (int i = 0; i < facilities.Count; i++)
+            {
+                var idx = i;
+                var fac = facilities[i];
+                var isSelected = (idx == activeIndex);
+
+                <button type="button" 
+                        class="bp-quality-step-tab @(isSelected ? "active" : "")"
+                        @onclick="() => SelectStep(idx)"
+                        role="tab"
+                        aria-selected="@(isSelected ? "true" : "false")"
+                        id="tab-quality-@fac.Key">
+                    <span class="bp-tab-num">0@(fac.StepNumber)</span>
+                    <span class="bp-tab-title">@fac.Title.ToUpper()</span>
+                    <span class="bp-tab-active-indicator" aria-hidden="true"></span>
+                </button>
+            }
+        </div>
+
+        <!-- Interactive Process Explorer Stage (Desktop: Left Media, Right Info Panel) -->
+        @{
+            var active = facilities[activeIndex];
+        }
+        <div class="bp-quality-explorer-stage fade-up delay-3">
+            <!-- LEFT: Large Active Image with Animated Transition -->
+            <div class="bp-quality-media-column">
+                <div class="bp-quality-image-canvas @(isTransitioning ? "transitioning" : "")" @onclick="State.OpenVideoModal" style="cursor: pointer;" title="Reproducir video de calidad y origen">
+                    <img src="@active.ImageUrl" alt="@active.Title - @active.Subtitle" class="bp-quality-stage-img" loading="lazy" />
+                    <div class="bp-quality-image-overlay"></div>
+                    <button type="button" 
+                            class="bp-quality-play-btn" 
+                            @onclick="State.OpenVideoModal"
+                            @onclick:stopPropagation="true"
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: rgba(0, 24, 38, 0.82); border: 2px solid var(--color-cyan); color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(8px); transition: transform 0.25s, background-color 0.25s;"
+                            aria-label="Ver video documental de origen">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px; color: var(--color-cyan);">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Floating Scientific Badges -->
+                <div class="bp-quality-floating-badges">
+                    <div class="bp-spec-pill">
+                        <span class="bp-spec-dot"></span>
+                        <span class="bp-spec-key">Capacidad:</span>
+                        <strong class="bp-spec-val">@active.Highlight</strong>
+                    </div>
+
+                    <div class="bp-spec-pill">
+                        <span class="bp-spec-icon">🌡️</span>
+                        <span class="bp-spec-key">Temperatura:</span>
+                        <strong class="bp-spec-val">@active.TemperatureSpec</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Information Panel -->
+            <div class="bp-quality-info-column @(isTransitioning ? "transitioning" : "")">
+                <!-- Step Indicator Pill -->
+                <div class="bp-quality-indicator-row">
+                    <span class="bp-quality-phase-kicker">PROCESO 0@(active.StepNumber) DE 05</span>
+                    <span class="bp-quality-audit-badge">@active.CertificationStandard</span>
+                </div>
+
+                <h3 class="bp-quality-active-title">@active.Title.ToUpper()</h3>
+                <h4 class="bp-quality-active-subtitle">@active.Subtitle</h4>
+
+                <p class="bp-quality-active-desc">
+                    @active.Description
+                </p>
+
+                <!-- Technical Precision Metrics -->
+                <div class="bp-quality-metrics-grid">
+                    <div class="bp-tech-metric-card">
+                        <span class="bp-tech-label">Estándar de Control</span>
+                        <strong class="bp-tech-val">@active.CertificationStandard</strong>
+                    </div>
+
+                    <div class="bp-tech-metric-card">
+                        <span class="bp-tech-label">Parámetro Térmico</span>
+                        <strong class="bp-tech-val">@active.TemperatureSpec</strong>
+                    </div>
+                </div>
+
+                <!-- Action CTA -->
+                <div class="bp-quality-actions">
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="() => State.OpenContactModal()">
+                        <span>@State.T("quality.btnTech")</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <a href="#proceso" class="bp-btn bp-btn-outline-navy">
+                        <span>Ver Cronología de Cosecha</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private IReadOnlyList<QualityStep> facilities = new List<QualityStep>();
+    private int activeIndex = 0;
+    private bool isTransitioning = false;
+
+    protected override void OnInitialized()
+    {
+        facilities = Quality.GetFacilities();
+        var currentKey = State.ActiveFacilityKey;
+        var foundIdx = facilities.ToList().FindIndex(f => f.Key == currentKey);
+        activeIndex = (foundIdx >= 0) ? foundIdx : 0;
+
+        State.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange()
+    {
+        var foundIdx = facilities.ToList().FindIndex(f => f.Key == State.ActiveFacilityKey);
+        if (foundIdx >= 0 && foundIdx != activeIndex)
+        {
+            activeIndex = foundIdx;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SelectStep(int index)
+    {
+        if (index == activeIndex || index < 0 || index >= facilities.Count) return;
+
+        isTransitioning = true;
+        StateHasChanged();
+
+        await Task.Delay(130);
+        activeIndex = index;
+        State.SetActiveFacilityKey(facilities[index].Key);
+        isTransitioning = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= HandleStateChange;
+    }
+}

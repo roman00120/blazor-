@@ -1,0 +1,36 @@
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div id="@ContainerId" class="bp-hero-three-container" aria-hidden="true"></div>
+
+@code {
+    [Parameter]
+    public string ContainerId { get; set; } = "bp-hero-three-droplets";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesHeroThree.init", ContainerId);
+            }
+            catch
+            {
+                // Gracefully degrade without impacting the UI if WebGL or Three is not present
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("berriesHeroThree.destroy", ContainerId);
+        }
+        catch
+        {
+            // Ignore during page teardown
+        }
+    }
+}

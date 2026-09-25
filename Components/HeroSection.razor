@@ -1,0 +1,124 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-hero-section">
+    <div class="bp-hero-container">
+        <!-- Left Hero Content -->
+        <div class="bp-hero-content">
+            <span class="bp-hero-overline">@GetText("FRESHER TOMORROWS", "FRESHER TOMORROWS", "DES LENDEMAINS PLUS FRAIS")</span>
+            
+            <h1 class="bp-hero-title">
+                @GetText("BERRIES GROWN WITH", "BERRIES GROWN WITH", "DES BAIES CULTIVÉES AVEC")
+                <span class="highlight-cyan">@GetText("PURPOSE.", "PURPOSE.", "PASSION.")</span>
+            </h1>
+
+            <p class="bp-hero-description">
+                @GetText(
+                    "Cultivamos berries excepcionales para un mundo más saludable y delicioso.",
+                    "We cultivate exceptional berries for a healthier and more flavorful world.",
+                    "Nous cultivons des baies d'exception pour un monde plus sain et gourmand."
+                )
+            </p>
+
+            <div class="bp-hero-actions">
+                <a href="#productos" class="bp-btn bp-btn-cyan">
+                    <span>@GetText("Explorar productos", "Explore products", "Explorer nos fruits")</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+
+                <a href="#calidad" class="bp-btn bp-btn-outline-white">
+                    <span>@GetText("Conocer nosotros", "About our story", "Notre histoire")</span>
+                </a>
+            </div>
+
+            <!-- Video trigger -->
+            <button type="button" class="bp-hero-video-btn" @onclick="AppState.OpenVideoModal">
+                <span class="play-icon-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </span>
+                <span>@GetText("Ver el vídeo", "Watch video", "Voir le film")</span>
+            </button>
+        </div>
+
+        <!-- Right Floating Stat Badges -->
+        <div class="bp-hero-metrics">
+            <div class="bp-metric-badge" @onclick='() => AppState.SetSelectedProductById("big-delight-arandanos")'>
+                <div class="bp-metric-icon">
+                    <!-- Berry icon -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="7"></circle>
+                        <circle cx="8" cy="8" r="4"></circle>
+                        <circle cx="16" cy="8" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="bp-metric-data">
+                    <span class="bp-metric-value">42+</span>
+                    <span class="bp-metric-label">@GetText("SKUs para retail", "Retail SKUs available", "Formats disponibles retail")</span>
+                </div>
+            </div>
+
+            <div class="bp-metric-badge" @onclick='() => AppState.SetActiveProcessStep(5)'>
+                <div class="bp-metric-icon">
+                    <!-- Globe icon -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div class="bp-metric-data">
+                    <span class="bp-metric-value">19+</span>
+                    <span class="bp-metric-label">@GetText("Países a los que exportamos", "Countries exported to", "Pays d'exportation")</span>
+                </div>
+            </div>
+
+            <div class="bp-metric-badge" @onclick='() => AppState.OpenGeneticsModal(AppStateService_DefaultVariety)'>
+                <div class="bp-metric-icon">
+                    <!-- DNA / Genetics icon -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 15c6.667-6 13.333 0 20-6"></path>
+                        <path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"></path>
+                        <path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"></path>
+                        <path d="M17 6l-2.5-2.5"></path>
+                        <path d="M14 8l-1-1"></path>
+                        <path d="M7 18l2.5 2.5"></path>
+                        <path d="M3.5 14.5l3 1"></path>
+                        <path d="M20.5 9.5l-3-1"></path>
+                    </svg>
+                </div>
+                <div class="bp-metric-data">
+                    <span class="bp-metric-value" style="font-size: 1.15rem;">@GetText("Genética", "Genetics", "Génétique")</span>
+                    <span class="bp-metric-label" style="color: var(--bp-cyan); font-weight: 700;">@GetText("Variedades Premium", "Premium varieties", "Variétés d'élite")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Inject] BerryDataService DataService { get; set; } = default!;
+
+    private GeneticsVariety AppStateService_DefaultVariety => DataService.GetGenetics().First();
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

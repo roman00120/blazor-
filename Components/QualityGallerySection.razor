@@ -1,0 +1,89 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-quality-section" id="calidad">
+    <div class="bp-quality-container">
+        <!-- Intro Column -->
+        <div class="bp-quality-intro">
+            <h2>
+                @GetText("EXCELENCIA", "EXCELLENCE", "EXCELLENCE")
+                <span>@GetText("Y CALIDAD", "& QUALITY", "& QUALITÉ")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Cuidamos cada detalle, desde el campo hasta tu mesa, con procesos que garantizan frescura, seguridad y un sabor excepcional.",
+                    "We care for every single detail from field to table, backed by protocols that guarantee peak freshness, traceability, and unmatched flavor.",
+                    "Nous veillons sur chaque détail, du champ à la table, garantissant une fraîcheur absolue, une sécurité totale et une saveur d'exception."
+                )
+            </p>
+
+            <button type="button" class="bp-btn bp-btn-outline-cyan" @onclick='() => AppState.SetActiveProcessStep(1)'>
+                <span>@GetText("Conoce nuestro proceso", "Discover our process", "Découvrir notre processus")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 5 Facilities Horizontal Cards Row -->
+        <div class="bp-quality-cards-row">
+            @foreach (var fac in DataService.GetQualityFacilities())
+            {
+                var isActive = fac.Code == AppState.ActiveQualityCode;
+                <div class="bp-quality-card @(isActive ? "active" : "")" 
+                     @onclick="() => AppState.SetActiveQualityCode(fac.Code)"
+                     title="@fac.Description">
+                    <div class="bp-quality-card-header">
+                        <span class="num">0@(fac.Number)</span>
+                        <span class="title">
+                            @(AppState.CurrentLanguage switch {
+                                "EN" => fac.TitleEn,
+                                "FR" => fac.TitleFr,
+                                _ => fac.Title
+                            })
+                        </span>
+                    </div>
+
+                    <img src="@fac.ImageUrl" alt="@fac.Title" loading="lazy" />
+                </div>
+            }
+
+            <!-- Navigation circle arrow -->
+            <button type="button" class="bp-btn-circle" style="align-self: center; flex-shrink: 0;" @onclick="CycleQualityFacility" title="Siguiente instalación">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void CycleQualityFacility()
+    {
+        var facilities = DataService.GetQualityFacilities();
+        var index = facilities.FindIndex(f => f.Code == AppState.ActiveQualityCode);
+        var nextIndex = (index + 1) % facilities.Count;
+        AppState.SetActiveQualityCode(facilities[nextIndex].Code);
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

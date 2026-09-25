@@ -1,0 +1,77 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-categories-section" id="productos">
+    <div class="bp-categories-container">
+        <!-- Intro Column -->
+        <div class="bp-categories-intro">
+            <h2>
+                @GetText("NUESTRAS", "OUR", "NOS")
+                <span>@GetText("BERRIES", "BERRIES", "BAIES")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Un portafolio fresco, versátil y lleno de sabor. Cultivamos berries para distintos estilos de vida, ocasiones de consumo y necesidades comerciales.",
+                    "A fresh, versatile, and flavorful portfolio. We cultivate berries for diverse lifestyles, consumption occasions, and global retail demands.",
+                    "Une gamme fraîche, gourmande et diversifiée. Nous cultivons des baies pour tous les modes de vie et exigences des marchés internationaux."
+                )
+            </p>
+
+            <a href="#catalogo" class="bp-btn bp-btn-outline-cyan">
+                <span>@GetText("Ver todos los productos", "View all products", "Tous nos produits")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <!-- 4 Categories Grid -->
+        <div class="bp-categories-grid">
+            @foreach (var cat in DataService.GetCategories())
+            {
+                <div class="bp-category-card" @onclick="() => AppState.OpenCategoryModal(cat)" title="@cat.Name">
+                    <img src="@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
+                    
+                    <div class="bp-card-overlay">
+                        <span class="bp-card-title">
+                            @(AppState.CurrentLanguage switch {
+                                "EN" => cat.NameEn,
+                                "FR" => cat.NameFr,
+                                _ => cat.Name
+                            })
+                        </span>
+
+                        <span class="bp-card-arrow">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,59 @@
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div id="@ContainerId" class="bp-three-scene @CssClass" aria-hidden="true">
+    @if (!string.IsNullOrEmpty(FallbackContent))
+    {
+        <div class="bp-three-fallback">@FallbackContent</div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string ContainerId { get; set; } = string.Empty;
+
+    [Parameter]
+    public string EffectType { get; set; } = "hero"; // "hero", "floating-berries", "globe"
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? FallbackContent { get; set; }
+
+    [Parameter]
+    public object? EffectOptions { get; set; }
+
+    private bool isInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !string.IsNullOrEmpty(ContainerId))
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesThreeManager.initScene", ContainerId, EffectType, EffectOptions);
+                isInitialized = true;
+            }
+            catch
+            {
+                // Graceful degradation when WebGL/Three.js is disabled or fails
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (isInitialized && !string.IsNullOrEmpty(ContainerId))
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesThreeManager.destroyScene", ContainerId);
+            }
+            catch
+            {
+                // Best-effort cleanup during teardown
+            }
+        }
+    }
+}

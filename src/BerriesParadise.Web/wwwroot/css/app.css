@@ -1,0 +1,47 @@
+/* Berries Paradise - Application Reset & System Overlays */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+#blazor-error-ui {
+    background: #003B52;
+    color: #F7FAFC;
+    bottom: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.85rem 1.5rem;
+    position: fixed;
+    width: 100%;
+    z-index: 100000;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 0.9rem;
+    border-top: 1px solid #08B8E8;
+}
+
+#blazor-error-ui a {
+    color: #08B8E8;
+    text-decoration: underline;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 1rem;
+    top: 0.75rem;
+    font-size: 1.1rem;
+    color: #9DDCF5;
+}
+
+.blazor-error-boundary {
+    background: #002B3C;
+    border-left: 4px solid #D81B60;
+    padding: 1.5rem;
+    color: #F7FAFC;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    margin: 1rem 0;
+}

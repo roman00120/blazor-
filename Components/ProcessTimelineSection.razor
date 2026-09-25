@@ -1,0 +1,154 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-process-banner" id="proceso">
+    <div class="bp-process-container">
+        <!-- Header -->
+        <div class="bp-process-header">
+            <h2>
+                @GetText("DEL CAMPO", "FROM FIELD", "DU CHAMP")
+                <span>@GetText("AL MUNDO", "TO THE WORLD", "AU MONDE")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Un proceso integrado que garantiza frescura, calidad y consistencia en cada etapa.",
+                    "An integrated value chain guaranteeing peak freshness, safety, and consistency at every single stage.",
+                    "Un processus intégré garantissant fraîcheur, sécurité et régularité exemplaire à chaque étape."
+                )
+            </p>
+        </div>
+
+        <!-- Interactive Stepper -->
+        <div class="bp-stepper-track-wrap">
+            <div class="bp-stepper-line"></div>
+            <!-- Dynamic progress width based on active step (1 to 5) -->
+            @{
+                var progressPct = (AppState.ActiveProcessStep - 1) * 25;
+            }
+            <div class="bp-stepper-progress" style="width: @(progressPct)%;"></div>
+
+            <div class="bp-stepper-nodes">
+                @foreach (var step in DataService.GetProcessSteps())
+                {
+                    var isActive = step.Number == AppState.ActiveProcessStep;
+                    var isCompleted = step.Number <= AppState.ActiveProcessStep;
+
+                    <button type="button" 
+                            class="bp-step-node @(isActive ? "active" : "")" 
+                            @onclick="() => AppState.SetActiveProcessStep(step.Number)">
+                        <div class="bp-node-circle">
+                            @if (step.Number == 1)
+                            {
+                                <!-- Sprout / plant icon -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 20h10"></path>
+                                    <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                                    <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+                                    <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+                                </svg>
+                            }
+                            else if (step.Number == 2)
+                            {
+                                <!-- Harvest / hands / basket icon -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="6" cy="6" r="3"></circle>
+                                    <circle cx="6" cy="18" r="3"></circle>
+                                    <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                                    <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                                    <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                                </svg>
+                            }
+                            else if (step.Number == 3)
+                            {
+                                <!-- Package / sorting icon -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16.5 9.4L7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55l8.95-5.16a1.78 1.78 0 0 0 0-3.1z"></path>
+                                </svg>
+                            }
+                            else if (step.Number == 4)
+                            {
+                                <!-- Cold Chain / Thermometer / Ice icon -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                                </svg>
+                            }
+                            else
+                            {
+                                <!-- Globe / Truck icon -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                            }
+                        </div>
+
+                        <div class="bp-node-label-wrap">
+                            <span class="bp-node-num">0@(step.Number)</span>
+                            <span class="bp-node-title">
+                                @(AppState.CurrentLanguage switch {
+                                    "EN" => step.TitleEn,
+                                    "FR" => step.TitleFr,
+                                    _ => step.Title
+                                })
+                            </span>
+                        </div>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Active Stage Card Details -->
+        @{
+            var currentStep = DataService.GetProcessSteps().FirstOrDefault(s => s.Number == AppState.ActiveProcessStep) 
+                              ?? DataService.GetProcessSteps().First();
+        }
+        <div class="bp-active-step-card">
+            <div class="bp-step-card-info">
+                <h3>
+                    <span>0@(currentStep.Number) &mdash; </span>
+                    @(AppState.CurrentLanguage switch {
+                        "EN" => currentStep.TitleEn,
+                        "FR" => currentStep.TitleFr,
+                        _ => currentStep.Title
+                    })
+                </h3>
+                <p>@currentStep.FullDesc</p>
+
+                <div class="bp-step-card-tags">
+                    <span class="bp-step-tag">✨ @currentStep.Highlight</span>
+                    <span class="bp-step-tag">🌡️ @currentStep.TempRange</span>
+                    <span class="bp-step-tag">🛡️ @currentStep.Standard</span>
+                </div>
+            </div>
+
+            <button type="button" class="bp-btn bp-btn-cyan" @onclick='() => AppState.SetActiveQualityCode(currentStep.StepKey)'>
+                <span>@GetText("Ver instalaciones", "View Facilities", "Voir installations")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,129 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+<footer class="bp-footer" id="contacto">
+    <div class="bp-footer-container">
+        <!-- Brand & Description -->
+        <div class="bp-footer-brand">
+            <img src="images/berries-paradise-logo.png" alt="Berries Paradise" />
+            <p>
+                @GetText(
+                    "Cultivando berries de categoría mundial con integridad, innovación genética y pasión por la salud de las familias globales.",
+                    "Cultivating world-class berries with integrity, genetic innovation, and passion for the health of families worldwide.",
+                    "Producteur d'excellence de baies premium avec intégrité, innovation variétale et passion pour la santé de tous."
+                )
+            </p>
+        </div>
+
+        <!-- 3 Columns Links -->
+        <div class="bp-footer-columns">
+            <div class="bp-footer-col">
+                <h4>@GetText("Productos", "Products", "Produits")</h4>
+                <ul>
+                    <li><a href="#productos" @onclick='() => AppState.SetSelectedProductById("clasica-arandanos")'>@GetText("Arándanos", "Blueberries", "Myrtilles")</a></li>
+                    <li><a href="#productos" @onclick='() => AppState.SetSelectedProductById("organica-frambuesas")'>@GetText("Frambuesas", "Raspberries", "Framboises")</a></li>
+                    <li><a href="#productos" @onclick='() => AppState.SetSelectedProductById("legacy-zarzamoras")'>@GetText("Zarzamoras", "Blackberries", "Mûres")</a></li>
+                    <li><a href="#productos" @onclick='() => AppState.SetSelectedProductById("big-delight-arandanos")'>@GetText("Fresas", "Strawberries", "Fraises")</a></li>
+                </ul>
+            </div>
+
+            <div class="bp-footer-col">
+                <h4>@GetText("Nosotros", "About", "À Propos")</h4>
+                <ul>
+                    <li><a href="#calidad">@GetText("Excelencia y calidad", "Excellence & Quality", "Excellence & Qualité")</a></li>
+                    <li><a href="#proceso">@GetText("Del Campo al Mundo", "Field to World", "Du Champ au Monde")</a></li>
+                    <li><a href="#genetica">@GetText("Genética Premium", "Premium Genetics", "Génétique d'Élite")</a></li>
+                    <li><a href="#inspiracion">@GetText("Inspiración", "Inspiration", "Inspiration")</a></li>
+                </ul>
+            </div>
+
+            <div class="bp-footer-col">
+                <h4>@GetText("Ayuda", "Support", "Assistance")</h4>
+                <ul>
+                    <li><a href="#" @onclick="AppState.OpenContactModal">@GetText("FAQs Comerciales", "Commercial FAQs", "FAQ Commerciale")</a></li>
+                    <li><a href="#" @onclick="AppState.OpenContactModal">@GetText("Contacto Ventas", "Sales Contact", "Contact Ventes")</a></li>
+                    <li><a href="#" @onclick="AppState.OpenContactModal">@GetText("Certificaciones", "Certifications", "Certifications")</a></li>
+                    <li><a href="#" @onclick="AppState.OpenContactModal">@GetText("Bolsa de Trabajo", "Careers", "Recrutement")</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Social & Hashtag -->
+        <div class="bp-footer-social-col">
+            <h4>@GetText("Síguenos", "Follow us", "Suivez-nous")</h4>
+            <div class="bp-social-icons">
+                <!-- Instagram -->
+                <a href="https://instagram.com" target="_blank" class="bp-social-link" title="Instagram">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </a>
+                <!-- Facebook -->
+                <a href="https://facebook.com" target="_blank" class="bp-social-link" title="Facebook">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://tiktok.com" target="_blank" class="bp-social-link" title="TikTok">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                    </svg>
+                </a>
+                <!-- LinkedIn -->
+                <a href="https://linkedin.com" target="_blank" class="bp-social-link" title="LinkedIn">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+                <!-- YouTube -->
+                <a href="https://youtube.com" target="_blank" class="bp-social-link" title="YouTube">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                        <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="bp-hashtag">#BerriesParadise</div>
+        </div>
+    </div>
+
+    <!-- Bottom Legal Bar -->
+    <div class="bp-footer-bottom">
+        <div class="bp-footer-legal-links">
+            <a href="#">@GetText("Aviso de privacidad", "Privacy Policy", "Politique de confidentialité")</a>
+            <span>•</span>
+            <a href="#">@GetText("Términos de servicio", "Terms of Service", "Conditions d'utilisation")</a>
+            <span>•</span>
+            <a href="#">@GetText("Cumplimiento ético", "Ethical Compliance", "Conformité éthique")</a>
+        </div>
+
+        <div>
+            ©2026 Berries Paradise. @GetText("Todos los derechos reservados.", "All rights reserved.", "Tous droits réservés.")
+        </div>
+    </div>
+</footer>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

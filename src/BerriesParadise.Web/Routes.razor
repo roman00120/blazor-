@@ -1,0 +1,14 @@
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4rem 2rem;">
+                <h1 style="font-size: 3rem; color: var(--bp-cyan); margin-bottom: 1rem;">404</h1>
+                <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); margin-bottom: 2rem;">La página que buscas no existe en Berries Paradise.</p>
+                <a href="/" class="bp-btn bp-btn-cyan">Volver al Inicio</a>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>

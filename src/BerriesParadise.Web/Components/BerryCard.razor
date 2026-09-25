@@ -1,0 +1,69 @@
+@using BerriesParadise.Core.Models
+
+<div class="bp-berry-explorer-card @(IsActive ? "active" : "")" 
+     @onclick="HandleClick" 
+     @onmouseenter="HandleMouseEnter"
+     @onmouseleave="HandleMouseLeave"
+     role="button"
+     tabindex="0"
+     aria-label="Explorar @Berry.Name: @Berry.Description"
+     style="--berry-accent: @Berry.AccentColor;">
+     
+    <div class="bp-berry-media-frame">
+        <img src="@Berry.ImageUrl" alt="@Berry.Name" class="bp-berry-img" loading="lazy" />
+        <div class="bp-berry-tint-layer"></div>
+    </div>
+
+    <div class="bp-berry-content-overlay">
+        <div class="bp-berry-meta">
+            <span class="bp-berry-kicker">BERRIES PARADISE</span>
+            <h3 class="bp-berry-name">@Berry.Name</h3>
+            <p class="bp-berry-short-desc">@Berry.Description</p>
+        </div>
+
+        <div class="bp-berry-action-wrap">
+            <span class="bp-berry-cta-text">Conocer más</span>
+            <span class="bp-berry-arrow-circle" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Berry Berry { get; set; } = default!;
+
+    [Parameter]
+    public bool IsActive { get; set; }
+
+    [Parameter]
+    public EventCallback<Berry> OnClick { get; set; }
+
+    [Parameter]
+    public EventCallback<Berry> OnHover { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (OnClick.HasDelegate)
+        {
+            await OnClick.InvokeAsync(Berry);
+        }
+    }
+
+    private async Task HandleMouseEnter()
+    {
+        if (OnHover.HasDelegate)
+        {
+            await OnHover.InvokeAsync(Berry);
+        }
+    }
+
+    private void HandleMouseLeave()
+    {
+        // Smooth transition back
+    }
+}

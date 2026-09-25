@@ -1,0 +1,71 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-genetics-section" id="genetica">
+    <div class="bp-genetics-container">
+        <!-- Intro Column -->
+        <div class="bp-genetics-intro">
+            <h2>
+                @GetText("GENÉTICA", "PREMIUM", "GÉNÉTIQUE")
+                <span>@GetText("PREMIUM", "GENETICS", "PREMIUM")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Detrás de cada berry hay una obsesión por los detalles: desde la elección de genéticas superiores hasta la cosecha a mano para darte frutos simplemente perfectos.",
+                    "Behind every berry lies an obsession with detail: from superior varietal selection to mindful hand harvesting, delivering fruit that is simply extraordinary.",
+                    "Derrière chaque baie se cache une rigueur absolue : de la sélection des meilleures variétés à la récolte manuelle d'une précision exemplaire."
+                )
+            </p>
+
+            <button type="button" class="bp-btn bp-btn-outline-cyan" @onclick='() => AppState.OpenGeneticsModal(DataService.GetGenetics().First())'>
+                <span>@GetText("Conocer nuestras genéticas", "Explore our genetics", "Découvrir nos variétés")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 4 Genetics Cards Grid -->
+        <div class="bp-genetics-grid">
+            @foreach (var variety in DataService.GetGenetics())
+            {
+                <div class="bp-genetics-card" @onclick="() => AppState.OpenGeneticsModal(variety)" title="@variety.Name">
+                    <img src="@variety.ImageUrl" alt="@variety.Name" loading="lazy" />
+                    
+                    <div class="bp-gen-overlay">
+                        <span class="bp-gen-name">@variety.Name</span>
+
+                        <span class="bp-gen-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

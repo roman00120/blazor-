@@ -1,0 +1,130 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-product-showcase-section" id="catalogo">
+    <div class="bp-product-container">
+        <!-- Left: Clamshell Pack Mockup -->
+        <div class="bp-product-pack-wrap">
+            <div class="bp-product-pack-glow"></div>
+            <img src="@AppState.SelectedProduct.ClamshellImage" 
+                 alt="@AppState.SelectedProduct.Name" 
+                 class="bp-product-pack-img" />
+        </div>
+
+        <!-- Center: Product Info -->
+        <div class="bp-product-info">
+            <span class="bp-product-overline">@GetText("PORTAFOLIO DE PRODUCTOS", "PRODUCT PORTFOLIO", "GAMME DE PRODUITS")</span>
+            
+            <h2 class="bp-product-title">
+                @AppState.SelectedProduct.Name
+                <span>@AppState.SelectedProduct.BerryType.ToUpper()</span>
+            </h2>
+
+            <p class="bp-product-desc">
+                @(AppState.CurrentLanguage switch {
+                    "EN" => AppState.SelectedProduct.DescriptionEn,
+                    "FR" => AppState.SelectedProduct.DescriptionFr,
+                    _ => AppState.SelectedProduct.Description
+                })
+            </p>
+
+            <!-- Feature Pills -->
+            <div class="bp-product-pills">
+                <div class="bp-spec-pill" title="Calibre y tamaño">
+                    <!-- Diamond icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 3h12l4 6-10 13L2 9z"></path>
+                    </svg>
+                    <span>@AppState.SelectedProduct.SizeMetric</span>
+                </div>
+
+                <div class="bp-spec-pill" title="Sabor y perfil sensorial">
+                    <!-- Leaf / Sparkle icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L15 8L21 9L17 14L18 20L12 17L6 20L7 14L3 9L9 8L12 2Z"></path>
+                    </svg>
+                    <span>@AppState.SelectedProduct.FlavorMetric</span>
+                </div>
+
+                <div class="bp-spec-pill" title="Empaque y presentación">
+                    <!-- Box icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>@AppState.SelectedProduct.PackagingMetric</span>
+                </div>
+            </div>
+
+            <!-- CTA button -->
+            <button type="button" class="bp-btn bp-btn-cyan" @onclick="AppState.OpenContactModal">
+                <span>@GetText("Conoce más", "Learn more", "En savoir plus")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Right: Interactive Product Selector Sidebar -->
+        <div class="bp-product-sidebar">
+            @foreach (var prod in DataService.GetProducts())
+            {
+                var isSelected = prod.Id == AppState.SelectedProduct.Id;
+                <div class="bp-product-selector-item @(isSelected ? "active" : "")" 
+                     @onclick="() => AppState.SetSelectedProduct(prod)">
+                    <img src="@prod.ClamshellImage" alt="@prod.Name" class="bp-thumb-mini" />
+                    
+                    <div class="bp-item-meta">
+                        <span class="bp-item-name">@prod.Name</span>
+                        <span class="bp-item-cat">@prod.BerryType</span>
+                    </div>
+                </div>
+            }
+
+            <!-- Bottom pagination & arrows -->
+            <div class="bp-sidebar-controls">
+                <button type="button" class="bp-btn-circle" style="width: 32px; height: 32px;" @onclick="AppState.PrevProduct" title="Anterior">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <div class="bp-dots">
+                    @foreach (var prod in DataService.GetProducts())
+                    {
+                        var isSel = prod.Id == AppState.SelectedProduct.Id;
+                        <span class="bp-dot @(isSel ? "active" : "")" @onclick="() => AppState.SetSelectedProduct(prod)"></span>
+                    }
+                </div>
+
+                <button type="button" class="bp-btn-circle" style="width: 32px; height: 32px;" @onclick="AppState.NextProduct" title="Siguiente">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

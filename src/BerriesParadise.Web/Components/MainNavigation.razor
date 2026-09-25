@@ -1,0 +1,258 @@
+@inject CompanyInformation CompanyInfo
+@inject WebUiStateService State
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<header class="bp-navbar-wrapper @(isScrolled ? "scrolled" : "")">
+    <div class="bp-nav-container">
+        <a href="#" class="bp-brand-logo" aria-label="Berries Paradise Inicio" @onclick="async () => await CloseMobileMenu()">
+            <img src="images/berries-paradise-logo.png" alt="@CompanyInfo.CompanyName" />
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="bp-nav-links bp-desktop-nav" aria-label="Menú principal">
+            @foreach (var nav in CompanyInfo.GetNavigation().OrderBy(n => n.Order))
+            {
+                <a href="@nav.TargetUrl" class="bp-nav-link">@State.T("nav." + nav.Id)</a>
+            }
+        </nav>
+
+        <div class="bp-nav-actions">
+            <!-- Premium Language Dropdown (Visible on Desktop and Mobile Header) -->
+            <div class="bp-lang-dropdown-wrapper" @onkeydown="HandleLangKeyDown">
+                @if (isLangDropdownOpen)
+                {
+                    <div class="bp-lang-backdrop" @onclick="CloseLangDropdown" aria-hidden="true"></div>
+                }
+
+                <button type="button"
+                        class="bp-lang-trigger @(isLangDropdownOpen ? "active" : "")"
+                        @onclick="ToggleLangDropdown"
+                        aria-expanded="@(isLangDropdownOpen ? "true" : "false")"
+                        aria-haspopup="listbox"
+                        aria-label="@($"Selector de idioma. Idioma actual: {State.CurrentLanguage}")">
+                    <span class="bp-lang-globe-icon" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </span>
+                    <span class="bp-lang-label">@State.CurrentLanguage</span>
+                    <span class="bp-lang-arrow @(isLangDropdownOpen ? "open" : "")" aria-hidden="true">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </span>
+                </button>
+
+                @if (isLangDropdownOpen)
+                {
+                    <div class="bp-lang-dropdown-menu" role="listbox" aria-label="Idiomas disponibles">
+                        @foreach (var lang in languages)
+                        {
+                            var isSelected = State.CurrentLanguage == lang.Code;
+                            <button type="button"
+                                    role="option"
+                                    aria-selected="@(isSelected ? "true" : "false")"
+                                    class="bp-lang-item @(isSelected ? "selected" : "")"
+                                    @onclick="() => SelectLanguage(lang.Code)">
+                                <div class="bp-lang-item-left">
+                                    <span class="bp-lang-item-flag" aria-hidden="true">@lang.Flag</span>
+                                    <span class="bp-lang-item-name">@lang.Name</span>
+                                </div>
+                                @if (isSelected)
+                                {
+                                    <svg class="bp-lang-item-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                }
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Search Icon -->
+            <button type="button" class="bp-search-btn bp-touch-target" title="Buscar en catálogo" @onclick="State.OpenSearchModal" aria-label="Buscar en catálogo">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+
+            <!-- Desktop Sales CTA button -->
+            <button type="button" class="bp-btn bp-btn-yellow bp-desktop-cta" @onclick="State.OpenContactModal">
+                <span>@State.T("nav.cta")</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+
+            <!-- Premium Mobile Menu Hamburger Button -->
+            <button type="button" 
+                    class="bp-mobile-menu-toggle bp-touch-target @(isMobileMenuOpen ? "active" : "")" 
+                    @onclick="ToggleMobileMenu"
+                    aria-label="@(isMobileMenuOpen ? "Cerrar menú" : "Abrir menú de navegación")"
+                    aria-expanded="@(isMobileMenuOpen ? "true" : "false")">
+                <span class="bp-hamburger-line"></span>
+                <span class="bp-hamburger-line"></span>
+                <span class="bp-hamburger-line"></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Premium Fullscreen Mobile Drawer Menu (Outside header to avoid backdrop-filter trapping position: fixed) -->
+<div class="bp-mobile-drawer-backdrop @(isMobileMenuOpen ? "open" : "")" @onclick="CloseMobileMenu" aria-hidden="@(isMobileMenuOpen ? "false" : "true")"></div>
+<aside class="bp-mobile-drawer @(isMobileMenuOpen ? "open" : "")" role="dialog" aria-modal="true" aria-label="Menú de navegación móvil" @onclick:stopPropagation="true">
+    <div class="bp-mobile-drawer-header">
+        <img src="images/berries-paradise-logo.png" alt="@CompanyInfo.CompanyName" class="bp-mobile-drawer-logo" />
+        <button type="button" class="bp-mobile-drawer-close bp-touch-target" @onclick="CloseMobileMenu" aria-label="Cerrar menú">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <nav class="bp-mobile-drawer-nav">
+        @foreach (var nav in CompanyInfo.GetNavigation().OrderBy(n => n.Order))
+        {
+            <a href="@nav.TargetUrl" class="bp-mobile-drawer-link" @onclick="CloseMobileMenu">
+                <span class="bp-drawer-link-text">@State.T("nav." + nav.Id)</span>
+                <span class="bp-drawer-link-arrow">→</span>
+            </a>
+        }
+    </nav>
+
+    <div class="bp-mobile-drawer-footer">
+        <div class="bp-mobile-drawer-lang">
+            <span class="bp-drawer-lang-label">@State.T("footer.language")</span>
+            <div class="bp-drawer-lang-buttons">
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => SelectLanguage("ES")'>ES</button>
+                <span class="bp-drawer-lang-sep">/</span>
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => SelectLanguage("EN")'>EN</button>
+                <span class="bp-drawer-lang-sep">/</span>
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => SelectLanguage("FR")'>FR</button>
+            </div>
+        </div>
+
+        <button type="button" class="bp-btn bp-btn-yellow bp-mobile-drawer-cta" @onclick="async () => { await CloseMobileMenu(); State.OpenContactModal(); }">
+            <span>@State.T("nav.cta")</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+    </div>
+</aside>
+
+@code {
+    private bool isScrolled = false;
+    private bool isMobileMenuOpen = false;
+    private bool isLangDropdownOpen = false;
+
+    private record LanguageItem(string Code, string Name, string Flag);
+
+    private readonly LanguageItem[] languages = new[]
+    {
+        new LanguageItem("ES", "Español", "🇲🇽"),
+        new LanguageItem("EN", "English", "🇺🇸"),
+        new LanguageItem("FR", "Français", "🇫🇷")
+    };
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleLangDropdown()
+    {
+        isLangDropdownOpen = !isLangDropdownOpen;
+    }
+
+    private void CloseLangDropdown()
+    {
+        if (isLangDropdownOpen)
+        {
+            isLangDropdownOpen = false;
+            StateHasChanged();
+        }
+    }
+
+    private void HandleLangKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            CloseLangDropdown();
+        }
+    }
+
+    private async Task ToggleMobileMenu()
+    {
+        isMobileMenuOpen = !isMobileMenuOpen;
+        if (isMobileMenuOpen)
+        {
+            isLangDropdownOpen = false;
+        }
+        StateHasChanged();
+        await SetBodyScrollLock(isMobileMenuOpen);
+    }
+
+    private async Task CloseMobileMenu()
+    {
+        if (isMobileMenuOpen)
+        {
+            isMobileMenuOpen = false;
+            StateHasChanged();
+            await SetBodyScrollLock(false);
+        }
+    }
+
+    private void SelectLanguage(string lang)
+    {
+        State.SetLanguage(lang);
+        isLangDropdownOpen = false;
+        StateHasChanged();
+    }
+
+    private async Task SetBodyScrollLock(bool locked)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("berriesNav.setBodyScrollLock", locked);
+        }
+        catch
+        {
+            // Graceful degradation if JS not available
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("berriesHero.initNavbarScroll", ".bp-navbar-wrapper");
+            }
+            catch
+            {
+                // Graceful degradation
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= HandleStateChange;
+        _ = SetBodyScrollLock(false);
+    }
+}

@@ -1,0 +1,58 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-cta-banner">
+    <div class="bp-cta-container">
+        <div class="bp-cta-text">
+            <h2>
+                @GetText("LLEVAMOS BERRIES", "DELIVERING PREMIUM BERRIES", "DES BAIES D'EXCEPTION")
+                <span>@GetText("DE CALIDAD A TU MERCADO", "TO YOUR GLOBAL MARKET", "POUR VOTRE MARCHÉ")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "¿Buscas un socio confiable para tu cadena de suministro? Hablemos sobre cómo llevar lo mejor de nuestros campos a tu negocio.",
+                    "Seeking a reliable partner for your retail supply chain? Let's discuss bringing the best of our fields to your business.",
+                    "À la recherche d'un partenaire fiable pour votre chaîne logistique ? Échangeons sur les opportunités de partenariat."
+                )
+            </p>
+        </div>
+
+        <div class="bp-cta-buttons">
+            <a href="#catalogo" class="bp-btn bp-btn-cyan">
+                <span>@GetText("Ver productos", "View products", "Voir les produits")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </a>
+
+            <button type="button" class="bp-btn bp-btn-yellow" @onclick="AppState.OpenContactModal">
+                <span>@GetText("Contactar ventas", "Contact Sales", "Contacter Ventes")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

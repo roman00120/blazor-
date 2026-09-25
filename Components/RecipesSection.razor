@@ -1,0 +1,117 @@
+@inject BerryDataService DataService
+@inject AppStateService AppState
+@implements IDisposable
+
+<section class="bp-recipes-section" id="inspiracion">
+    <div class="bp-recipes-container">
+        <!-- Left Column -->
+        <div class="bp-recipes-left">
+            <span class="bp-recipes-overline">@GetText("INSPIRACIÓN", "INSPIRATION", "INSPIRATION")</span>
+            
+            <h2>
+                @GetText("RECETAS", "RECIPES WITH", "RECETTES AUX")
+                <span>@GetText("CON BERRIES", "FRESH BERRIES", "FRUITS ROUGES")</span>
+            </h2>
+
+            <p>
+                @GetText(
+                    "Ideas deliciosas para todos los momentos del día. Nutrición, sabor y creatividad en cada receta.",
+                    "Delicious culinary inspiration for every moment of the day. Pure nutrition, flavor, and creativity in every dish.",
+                    "Des idées gourmandes pour tous les moments de la journée. Vitalité, fraîcheur et créativité dans chaque assiette."
+                )
+            </p>
+
+            <button type="button" class="bp-btn bp-btn-cyan" @onclick='() => AppState.OpenRecipeModal(CurrentRecipe)'>
+                <span>@GetText("Ver todas las recetas", "View all recipes", "Voir toutes les recettes")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Center: Recipe Visual -->
+        <div class="bp-recipe-visual-wrap" @onclick='() => AppState.OpenRecipeModal(CurrentRecipe)' style="cursor: pointer;">
+            <img src="@CurrentRecipe.ImageUrl" alt="@CurrentRecipe.Title" loading="lazy" />
+        </div>
+
+        <!-- Right Column: Current Recipe Details & Controls -->
+        <div class="bp-recipe-details">
+            <span class="bp-recipe-category-tag">
+                @(AppState.CurrentLanguage switch {
+                    "EN" => CurrentRecipe.CategoryTagEn,
+                    "FR" => CurrentRecipe.CategoryTagFr,
+                    _ => CurrentRecipe.CategoryTag
+                })
+            </span>
+
+            <h3>
+                @(AppState.CurrentLanguage switch {
+                    "EN" => CurrentRecipe.TitleEn,
+                    "FR" => CurrentRecipe.TitleFr,
+                    _ => CurrentRecipe.Title
+                })
+            </h3>
+
+            <p>
+                @(AppState.CurrentLanguage switch {
+                    "EN" => CurrentRecipe.DescriptionEn,
+                    "FR" => CurrentRecipe.DescriptionFr,
+                    _ => CurrentRecipe.Description
+                })
+            </p>
+
+            <button type="button" class="bp-btn bp-btn-cyan" style="align-self: flex-start;" @onclick='() => AppState.OpenRecipeModal(CurrentRecipe)'>
+                <span>@GetText("Ver receta", "View recipe", "Voir la recette")</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+
+            <!-- Slider Controls: 01 / 08 and Arrows -->
+            <div class="bp-recipe-controls-row">
+                <div class="bp-recipe-counter">
+                    <span>0@(AppState.ActiveRecipeIndex + 1)</span> / 0@(TotalRecipes)
+                </div>
+
+                <div class="bp-recipe-arrows">
+                    <button type="button" class="bp-btn-circle" @onclick="AppState.PrevRecipe" title="Receta anterior">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <button type="button" class="bp-btn-circle" @onclick="AppState.NextRecipe" title="Siguiente receta">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private RecipeItem CurrentRecipe => DataService.GetRecipes().ElementAtOrDefault(AppState.ActiveRecipeIndex) 
+                                       ?? DataService.GetRecipes().First();
+    private int TotalRecipes => Math.Max(DataService.GetRecipes().Count, 8);
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

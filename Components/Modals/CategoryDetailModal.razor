@@ -1,0 +1,104 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.SelectedCategoryModal != null)
+{
+    var cat = AppState.SelectedCategoryModal;
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseCategoryModal">
+        <div class="bp-modal-box" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseCategoryModal">✕</button>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr; gap: 1.8rem; align-items: center; margin-bottom: 1.5rem;">
+                <img src="@cat.ImageUrl" alt="@cat.Name" style="width: 100%; aspect-ratio: 1; border-radius: var(--bp-radius-md); object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.4);" />
+                
+                <div>
+                    <span style="font-family: var(--bp-font-display); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan); text-transform: uppercase;">
+                        @GetText("PORTAFOLIO OFICIAL", "OFFICIAL PORTFOLIO", "GAMME OFFICIELLE")
+                    </span>
+                    <h3 style="font-size: 2.2rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => cat.NameEn,
+                            "FR" => cat.NameFr,
+                            _ => cat.Name
+                        })
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.98rem; margin-top: 0.5rem; line-height: 1.55;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => cat.SubtitleEn,
+                            "FR" => cat.SubtitleFr,
+                            _ => cat.Subtitle
+                        })
+                    </p>
+                </div>
+            </div>
+
+            <!-- Nutrition & Highlights Section -->
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md); padding: 1.2rem; margin-bottom: 1.4rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan); text-transform: uppercase; margin-bottom: 0.6rem;">
+                    @GetText("Perfil Nutricional & Beneficios", "Nutritional Profile & Health", "Profil Nutritionnel & Bienfaits")
+                </h4>
+                <p style="font-size: 0.92rem; color: rgba(255,255,255,0.9); line-height: 1.5;">@cat.NutritionInfo</p>
+
+                <div style="margin-top: 0.8rem; display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: rgba(255,255,255,0.75);">
+                    <strong>@GetText("Temporada:", "Seasonality:", "Saisonnalité:")</strong>
+                    <span>@cat.Season</span>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            <div style="margin-bottom: 1.6rem;">
+                <h4 style="font-size: 0.95rem; color: #ffffff; text-transform: uppercase; margin-bottom: 0.6rem;">
+                    @GetText("Estándares de Calidad", "Quality Standards", "Standards Qualité")
+                </h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                    @foreach (var feature in cat.KeyFeatures)
+                    {
+                        <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--bp-cyan);"></span>
+                            <span>@feature</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem;">
+                <button type="button" class="bp-btn bp-btn-outline-white" @onclick="AppState.CloseCategoryModal">
+                    @GetText("Cerrar", "Close", "Fermer")
+                </button>
+
+                <button type="button" class="bp-btn bp-btn-yellow" @onclick="GoToCatalog">
+                    <span>@GetText("Cotizar Variedad", "Quote Variety", "Demander un Devis")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void GoToCatalog()
+    {
+        AppState.CloseCategoryModal();
+        AppState.OpenContactModal();
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

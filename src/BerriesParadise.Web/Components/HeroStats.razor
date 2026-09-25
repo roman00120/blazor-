@@ -1,0 +1,70 @@
+@inject CompanyInformation CompanyInfo
+@inject WebUiStateService State
+@inject GeneticsCatalog Genetics
+
+<div class="bp-hero-metrics" role="region" aria-label="Métricas destacadas de Berries Paradise">
+    @foreach (var stat in CompanyInfo.GetStats())
+    {
+        <div class="bp-metric-badge anim-stat-stagger" 
+             @onclick="() => HandleStatClick(stat.Id)" 
+             role="button"
+             tabindex="0"
+             aria-label="@stat.FormattedValue @stat.Label"
+             title="@stat.FormattedValue - @stat.Label">
+            
+            <div class="bp-metric-icon" aria-hidden="true">
+                @if (stat.IconSvg == "berry")
+                {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="7"></circle>
+                        <circle cx="8" cy="8" r="4"></circle>
+                        <circle cx="16" cy="8" r="4"></circle>
+                    </svg>
+                }
+                else if (stat.IconSvg == "globe")
+                {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                }
+                else
+                {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 15c6.667-6 13.333 0 20-6"></path>
+                        <path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"></path>
+                        <path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"></path>
+                        <path d="M17 6l-2.5-2.5"></path>
+                        <path d="M14 8l-1-1"></path>
+                        <path d="M7 18l2.5 2.5"></path>
+                    </svg>
+                }
+            </div>
+
+            <div class="bp-metric-content">
+                <span class="bp-metric-number">@stat.FormattedValue</span>
+                <span class="bp-metric-label">@stat.Label</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private void HandleStatClick(string statId)
+    {
+        switch (statId)
+        {
+            case "skus":
+                State.SetSelectedProductById("big-delight-arandanos");
+                break;
+            case "countries":
+                State.SetActiveProcessStep(5);
+                break;
+            case "genetics":
+                var first = Genetics.GetAll().FirstOrDefault();
+                if (first != null) State.OpenGeneticsModal(first);
+                break;
+        }
+    }
+}

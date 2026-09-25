@@ -1,0 +1,110 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.SelectedGeneticsModal != null)
+{
+    var variety = AppState.SelectedGeneticsModal;
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseGeneticsModal">
+        <div class="bp-modal-box" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseGeneticsModal">✕</button>
+
+            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: center; margin-bottom: 1.5rem;">
+                <img src="@variety.ImageUrl" alt="@variety.Name" style="width: 100%; aspect-ratio: 1; border-radius: var(--bp-radius-md); object-fit: cover; box-shadow: 0 12px 30px rgba(0,0,0,0.5);" />
+                
+                <div>
+                    <span style="font-family: var(--bp-font-display); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan); text-transform: uppercase;">
+                        @variety.BerryType
+                    </span>
+                    <h3 style="font-size: 2.3rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem;">
+                        @variety.Name
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.96rem; margin-top: 0.6rem; line-height: 1.6;">
+                        @(AppState.CurrentLanguage switch {
+                            "EN" => variety.DescriptionEn,
+                            "FR" => variety.DescriptionFr,
+                            _ => variety.Description
+                        })
+                    </p>
+                </div>
+            </div>
+
+            <!-- Agronomic Technical Sheet -->
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md); padding: 1.4rem; margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan); text-transform: uppercase; margin-bottom: 1rem;">
+                    @GetText("Ficha Técnica Agronómica", "Agronomic Technical Specifications", "Fiche Technique Agronomique")
+                </h4>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Calibre", "Caliber", "Calibre")</span>
+                        <strong style="font-size: 1.15rem; color: #ffffff;">@variety.Caliber</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Dulzura Brix", "Brix Rating", "Taux Brix")</span>
+                        <strong style="font-size: 1.15rem; color: var(--bp-cyan);">@variety.BrixRating</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Firmeza", "Firmness", "Fermeté")</span>
+                        <strong style="font-size: 1.15rem; color: #ffffff;">@variety.Firmness</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Vida en Anaquel", "Shelf Life", "Tenue Rayon")</span>
+                        <strong style="font-size: 1rem; color: #ffffff;">@variety.ShelfLife</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Ventana Cosecha", "Harvest Window", "Période Récolte")</span>
+                        <strong style="font-size: 1rem; color: #ffffff;">@variety.HarvestWindow</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">@GetText("Licenciamiento", "Licensing", "Licence")</span>
+                        <strong style="font-size: 1rem; color: var(--bp-yellow);">@variety.GlobalLicensing</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem;">
+                <button type="button" class="bp-btn bp-btn-outline-white" @onclick="AppState.CloseGeneticsModal">
+                    @GetText("Cerrar", "Close", "Fermer")
+                </button>
+
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="InquireGenetics">
+                    <span>@GetText("Solicitar Programa de Cosecha", "Inquire Harvest Program", "Demander un Calendrier")</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void InquireGenetics()
+    {
+        AppState.CloseGeneticsModal();
+        AppState.OpenContactModal();
+    }
+
+    private string GetText(string es, string en, string fr) => AppState.CurrentLanguage switch
+    {
+        "EN" => en,
+        "FR" => fr,
+        _ => es
+    };
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

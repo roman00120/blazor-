@@ -1,0 +1,99 @@
+@inject WebUiStateService State
+@implements IDisposable
+
+@if (State.SelectedBerryModal != null)
+{
+    var berry = State.SelectedBerryModal;
+    <div class="bp-modal-backdrop" @onclick="State.CloseBerryModal" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="bp-modal-box bp-berry-modal-box" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="berry-modal-title">
+            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseBerryModal" aria-label="Cerrar ventana">✕</button>
+
+            <div class="bp-modal-product-layout">
+                <div class="bp-modal-media-box">
+                    <img src="@berry.ImageUrl" alt="@berry.Name" class="bp-modal-product-img" style="aspect-ratio: 1; border-radius: var(--bp-radius-md, 12px); object-fit: cover;" />
+                </div>
+                
+                <div class="bp-modal-info-box">
+                    <span style="font-family: var(--bp-font-display, var(--font-display)); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan, #08B8E8); text-transform: uppercase;">
+                        @berry.ScientificName
+                    </span>
+                    <h3 id="berry-modal-title" style="font-size: 2.2rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem;">
+                        @berry.Name
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.98rem; margin-top: 0.5rem; line-height: 1.55;">
+                        @berry.Description
+                    </p>
+                </div>
+            </div>
+
+            <!-- Health & Seasonality -->
+            <div class="bp-modal-card-note" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md, 12px); padding: 1.2rem; margin-bottom: 1.4rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan, #08B8E8); text-transform: uppercase; margin-bottom: 0.6rem;">
+                    Perfil Nutricional & Salud
+                </h4>
+                <p style="font-size: 0.92rem; color: rgba(255,255,255,0.9); line-height: 1.5;">@berry.HealthBenefits</p>
+
+                <div style="margin-top: 0.8rem; display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: rgba(255,255,255,0.75);">
+                    <strong>Temporada:</strong>
+                    <span>@berry.Seasonality</span>
+                </div>
+            </div>
+
+            <!-- Key Characteristics -->
+            <div style="margin-bottom: 1.6rem;">
+                <h4 style="font-size: 0.95rem; color: #ffffff; text-transform: uppercase; margin-bottom: 0.6rem;">
+                    Estándares y Atributos de Calidad
+                </h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0; margin: 0;">
+                    @foreach (var feat in berry.KeyCharacteristics)
+                    {
+                        <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--bp-cyan, #08B8E8); flex-shrink: 0;"></span>
+                            <span>@feat</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="bp-modal-footer-row">
+                <button type="button" class="bp-btn bp-btn-outline-white" @onclick="State.CloseBerryModal">
+                    Cerrar
+                </button>
+
+                <button type="button" class="bp-btn bp-btn-yellow" @onclick="GoToSales">
+                    <span>Cotizar Programa Retail</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            State.CloseBerryModal();
+        }
+    }
+
+    private void GoToSales()
+    {
+        State.CloseBerryModal();
+        State.OpenContactModal();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

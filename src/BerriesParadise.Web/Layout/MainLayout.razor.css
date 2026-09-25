@@ -1,0 +1,10 @@
+.bp-app-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bp-bg-dark);
+}
+
+.bp-main-content {
+    flex: 1;
+}

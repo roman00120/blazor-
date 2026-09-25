@@ -1,0 +1,108 @@
+@inject AppStateService AppState
+@implements IDisposable
+
+@if (AppState.IsVideoModalOpen)
+{
+    <div class="bp-modal-backdrop" @onclick="AppState.CloseVideoModal">
+        <div class="bp-modal-box" style="max-width: 880px; padding: 1.5rem;" @onclick:stopPropagation="true">
+            <button type="button" class="bp-modal-close-btn" @onclick="AppState.CloseVideoModal">✕</button>
+
+            <div style="position: relative; border-radius: var(--bp-radius-md); overflow: hidden; background: #000; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center;">
+                <!-- Simulated Video Player with Cinematic Visual -->
+                <img src="images/hero-bg.jpg" alt="Video Player" style="width: 100%; height: 100%; object-fit: cover; opacity: @(isPlaying ? "0.9" : "0.55"); transition: opacity 0.3s;" />
+
+                <div style="position: absolute; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);"></div>
+
+                @if (!isPlaying)
+                {
+                    <button type="button" 
+                            style="position: absolute; width: 76px; height: 76px; border-radius: 50%; background: var(--bp-cyan); color: #06121e; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 35px var(--bp-cyan-glow); transform: scale(1.05); transition: transform 0.2s;"
+                            @onclick="() => isPlaying = true">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+                }
+
+                <!-- Video HUD controls -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button type="button" class="bp-btn-circle" style="width: 36px; height: 36px;" @onclick="TogglePlay">
+                            @if (isPlaying)
+                            {
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            }
+                        </button>
+
+                        <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">
+                            <span>@(isPlaying ? "01:42" : "00:00")</span> / <span>03:15</span>
+                        </div>
+                    </div>
+
+                    <div style="font-family: var(--bp-font-display); font-size: 0.95rem; font-weight: 700; color: var(--bp-cyan); letter-spacing: 0.05em;">
+                        BERRIES PARADISE: DOCUMENTAL DE ORIGEN
+                    </div>
+
+                    <button type="button" class="bp-btn-circle" style="width: 36px; height: 36px;" @onclick="() => isMuted = !isMuted">
+                        @if (isMuted)
+                        {
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                                <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                            </svg>
+                        }
+                        else
+                        {
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            </svg>
+                        }
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h4 style="font-size: 1.2rem; color: #ffffff;">Berries Grown with Purpose: Cosechando el Futuro</h4>
+                    <p style="font-size: 0.88rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem;">
+                        Recorrido inmersivo por nuestros campos de Jalisco y Michoacán, laboratorios de genética varietal y túneles de frío inteligente.
+                    </p>
+                </div>
+
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="AppState.OpenContactModal">
+                    <span>Contactar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isPlaying = false;
+    private bool isMuted = false;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void TogglePlay()
+    {
+        isPlaying = !isPlaying;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

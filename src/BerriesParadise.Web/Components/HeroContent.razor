@@ -1,0 +1,52 @@
+@inject WebUiStateService State
+
+<div class="bp-hero-content">
+    <!-- Eyebrow: FRESHER TOMORROWS -->
+    <span class="bp-hero-eyebrow anim-reveal-eyebrow">@State.T("hero.eyebrow")</span>
+    
+    <!-- Headline: BERRIES GROWN WITH PURPOSE. revealed line by line -->
+    <h1 class="bp-hero-title" aria-label="Berries Grown with Purpose">
+        <span class="bp-headline-line anim-reveal-line-1">
+            <span class="bp-headline-inner">@State.T("hero.title1")</span>
+        </span>
+        <span class="bp-headline-line anim-reveal-line-2">
+            <span class="bp-headline-inner">@State.T("hero.title2")</span>
+        </span>
+        <span class="bp-headline-line anim-reveal-line-3">
+            <span class="bp-headline-inner highlight-cyan">@State.T("hero.title3")</span>
+        </span>
+    </h1>
+
+    <!-- Editorial Description (max-width: 520px) -->
+    <p class="bp-hero-description anim-reveal-desc">
+        @State.T("hero.description")
+    </p>
+
+    <!-- CTAs: Primary Cyan & Secondary Outline -->
+    <div class="bp-hero-actions anim-reveal-actions">
+        <a href="#productos" class="bp-btn bp-btn-cyan bp-hero-btn-primary" aria-label="@State.T("hero.btnExplore")">
+            <span>@State.T("hero.btnExplore")</span>
+            <svg class="bp-btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </a>
+
+        <a href="#calidad" class="bp-btn bp-btn-outline-white bp-hero-btn-secondary" aria-label="@State.T("hero.btnStory")">
+            <span>@State.T("hero.btnStory")</span>
+        </a>
+    </div>
+
+    <!-- Video CTA with animated pulsing ring -->
+    <button type="button" 
+            class="bp-hero-video-btn anim-reveal-video" 
+            @onclick="State.OpenVideoModal" 
+            aria-label="@State.T("hero.btnVideo")">
+        <span class="play-icon-wrap" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+            </svg>
+        </span>
+        <span class="video-btn-text">@State.T("hero.btnVideo")</span>
+    </button>
+</div>

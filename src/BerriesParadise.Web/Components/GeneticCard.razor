@@ -1,0 +1,66 @@
+@using BerriesParadise.Core.Models
+@inject WebUiStateService State
+
+<div class="bp-genetic-editorial-card" 
+     @onclick="HandleClick"
+     role="button"
+     tabindex="0"
+     aria-label="Ver detalles genéticos de @Variety.Name (@Variety.BerryType)"
+     title="@Variety.Name - @Variety.BerryType">
+     
+    <!-- Large photographic berry background image -->
+    <div class="bp-genetic-card-media">
+        <img src="@Variety.ImageUrl" alt="@Variety.Name" class="bp-genetic-photo-img" loading="lazy" />
+        <div class="bp-genetic-gradient-overlay"></div>
+    </div>
+
+    <!-- Top Badge -->
+    <div class="bp-genetic-top-bar">
+        <span class="bp-genetic-type-pill">@Variety.BerryType</span>
+        <span class="bp-genetic-brix-tag">@Variety.BrixRating</span>
+    </div>
+
+    <!-- Bottom Editorial Content -->
+    <div class="bp-genetic-bottom-content">
+        <span class="bp-genetic-subhead">@State.T("genetics.registered")</span>
+        <h3 class="bp-genetic-headline">@Variety.Name</h3>
+        
+        <!-- Additional information that fades in on hover -->
+        <p class="bp-genetic-desc-reveal">
+            @Variety.Description
+        </p>
+
+        <div class="bp-genetic-traits-row">
+            @foreach (var trait in Variety.KeyTraits.Take(2))
+            {
+                <span class="bp-trait-tag">@trait</span>
+            }
+        </div>
+
+        <div class="bp-genetic-action-row">
+            <span class="bp-genetic-action-label">@State.T("genetics.btnSheet")</span>
+            <div class="bp-genetic-arrow-btn" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public GeneticVariety Variety { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<GeneticVariety> OnSelect { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (OnSelect.HasDelegate)
+        {
+            await OnSelect.InvokeAsync(Variety);
+        }
+    }
+}

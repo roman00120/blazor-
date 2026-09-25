@@ -1,0 +1,109 @@
+@inject WebUiStateService State
+@implements IDisposable
+
+@if (State.SelectedGeneticsModal != null)
+{
+    var variety = State.SelectedGeneticsModal;
+    <div class="bp-modal-backdrop" @onclick="State.CloseGeneticsModal" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="bp-modal-box bp-genetics-modal-box" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="genetics-modal-title">
+            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseGeneticsModal" aria-label="Cerrar ventana">✕</button>
+
+            <div class="bp-modal-product-layout">
+                <div class="bp-modal-media-box">
+                    <img src="@variety.ImageUrl" alt="@variety.Name" class="bp-modal-product-img" style="aspect-ratio: 1; border-radius: var(--bp-radius-md, 12px); object-fit: cover;" />
+                </div>
+                
+                <div class="bp-modal-info-box">
+                    <span style="font-family: var(--bp-font-display, var(--font-display)); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bp-cyan, #08B8E8); text-transform: uppercase;">
+                        @variety.BerryType
+                    </span>
+                    <h3 id="genetics-modal-title" style="font-size: 2.3rem; font-weight: 900; color: #ffffff; margin-top: 0.2rem;">
+                        @variety.Name
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.96rem; margin-top: 0.6rem; line-height: 1.6;">
+                        @variety.Description
+                    </p>
+                </div>
+            </div>
+
+            <!-- Agronomic Technical Sheet -->
+            <div class="bp-modal-card-note" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--bp-radius-md, 12px); padding: 1.4rem; margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.95rem; color: var(--bp-cyan, #08B8E8); text-transform: uppercase; margin-bottom: 1rem;">
+                    Ficha Técnica Agronómica
+                </h4>
+
+                <div class="bp-modal-specs-grid bp-genetics-specs-grid" style="margin-bottom: 0;">
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Calibre</span>
+                        <strong style="font-size: 1.15rem; color: #ffffff;">@variety.Caliber</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Dulzura Brix</span>
+                        <strong style="font-size: 1.15rem; color: var(--bp-cyan, #08B8E8);">@variety.BrixRating</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Firmeza</span>
+                        <strong style="font-size: 1.15rem; color: #ffffff;">@variety.FirmnessScore</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Vida en Anaquel</span>
+                        <strong style="font-size: 1rem; color: #ffffff;">@variety.ShelfLifeDays</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Ventana Cosecha</span>
+                        <strong style="font-size: 1rem; color: #ffffff;">@variety.HarvestWindow</strong>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 0.8rem; border-radius: var(--bp-radius-sm, 6px); border: 1px solid rgba(255,255,255,0.08);">
+                        <span style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase;">Licenciamiento</span>
+                        <strong style="font-size: 0.92rem; color: var(--bp-yellow, #FFB800);">@variety.LicensingType</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bp-modal-footer-row">
+                <button type="button" class="bp-btn bp-btn-outline-white" @onclick="State.CloseGeneticsModal">
+                    Cerrar
+                </button>
+
+                <button type="button" class="bp-btn bp-btn-cyan" @onclick="InquireGenetics">
+                    <span>Solicitar Programa de Cosecha</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            State.CloseGeneticsModal();
+        }
+    }
+
+    private void InquireGenetics()
+    {
+        State.CloseGeneticsModal();
+        State.OpenContactModal();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}
