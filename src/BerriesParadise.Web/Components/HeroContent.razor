@@ -1,7 +1,7 @@
 @inject WebUiStateService State
 @implements IDisposable
 
-<div class="bp-hero-content">
+<div class="bp-hero-content" style="position: relative; z-index: 50; pointer-events: auto;">
     <!-- Eyebrow: FRESHER TOMORROWS -->
     <span class="bp-hero-eyebrow anim-reveal-eyebrow">@State.T("hero.eyebrow")</span>
     
@@ -24,7 +24,7 @@
     </p>
 
     <!-- CTAs: Primary Cyan & Secondary Outline -->
-    <div class="bp-hero-actions anim-reveal-actions">
+    <div class="bp-hero-actions anim-reveal-actions" style="position: relative; z-index: 52; pointer-events: auto;">
         <a href="#productos" class="bp-btn bp-btn-cyan bp-hero-btn-primary" aria-label="@State.T("hero.btnExplore")">
             <span>@State.T("hero.btnExplore")</span>
             <svg class="bp-btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -41,25 +41,36 @@
     <!-- Video CTA with animated pulsing ring -->
     <button type="button" 
             class="bp-hero-video-btn anim-reveal-video" 
-            @onclick="State.OpenVideoModal" 
+            @onclick="OpenVideoModal" 
+            style="position: relative; z-index: 60; cursor: pointer; pointer-events: auto !important; touch-action: manipulation; -webkit-tap-highlight-color: rgba(8, 184, 232, 0.3);"
             aria-label="@State.T("hero.btnVideo")">
-        <span class="play-icon-wrap" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <span class="play-icon-wrap" aria-hidden="true" style="pointer-events: none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="pointer-events: none;">
                 <polygon points="6 4 20 12 6 20 6 4"></polygon>
             </svg>
         </span>
-        <span class="video-btn-text">@State.T("hero.btnVideo")</span>
+        <span class="video-btn-text" style="pointer-events: none;">@State.T("hero.btnVideo")</span>
     </button>
 </div>
 
 @code {
+    private void OpenVideoModal()
+    {
+        State.OpenVideoModal();
+    }
+
     protected override void OnInitialized()
     {
-        State.OnChange += StateHasChanged;
+        State.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange()
+    {
+        _ = InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        State.OnChange -= StateHasChanged;
+        State.OnChange -= HandleStateChange;
     }
 }
