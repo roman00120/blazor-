@@ -2,37 +2,41 @@
 @inject WebUiStateService State
 @implements IDisposable
 
+@{
+    var v = State.GetLocalizedVariety(Variety);
+}
+
 <div class="bp-genetic-editorial-card" 
-     @onclick="HandleClick"
+     @onclick="HandleClick" 
      role="button"
      tabindex="0"
-     aria-label="@($"Ver detalles genéticos de {Variety.Name} ({Variety.BerryType})")"
-     title="@($"{Variety.Name} - {Variety.BerryType}")">
+     aria-label="@($"Ver detalles genéticos de {v.Name} ({v.BerryType})")"
+     title="@($"{v.Name} - {v.BerryType}")">
      
     <!-- Large photographic berry background image -->
     <div class="bp-genetic-card-media">
-        <img src="@Variety.ImageUrl" alt="@Variety.Name" class="bp-genetic-photo-img" loading="lazy" />
+        <img src="@v.ImageUrl" alt="@v.Name" class="bp-genetic-photo-img" loading="lazy" />
         <div class="bp-genetic-gradient-overlay"></div>
     </div>
 
     <!-- Top Badge -->
     <div class="bp-genetic-top-bar">
-        <span class="bp-genetic-type-pill">@Variety.BerryType</span>
-        <span class="bp-genetic-brix-tag">@Variety.BrixRating</span>
+        <span class="bp-genetic-type-pill">@v.BerryType</span>
+        <span class="bp-genetic-brix-tag">@v.BrixRating</span>
     </div>
 
     <!-- Bottom Editorial Content -->
     <div class="bp-genetic-bottom-content">
         <span class="bp-genetic-subhead">@State.T("genetics.registered")</span>
-        <h3 class="bp-genetic-headline">@Variety.Name</h3>
+        <h3 class="bp-genetic-headline">@v.Name</h3>
         
         <!-- Additional information that fades in on hover -->
         <p class="bp-genetic-desc-reveal">
-            @Variety.Description
+            @v.Description
         </p>
 
         <div class="bp-genetic-traits-row">
-            @foreach (var trait in Variety.KeyTraits.Take(2))
+            @foreach (var trait in v.KeyTraits.Take(2))
             {
                 <span class="bp-trait-tag">@trait</span>
             }

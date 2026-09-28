@@ -2,30 +2,34 @@
 @inject WebUiStateService State
 @implements IDisposable
 
+@{
+    var p = State.GetLocalizedProduct(Product);
+}
+
 <div class="bp-product-card @(IsFeatured ? "bp-card-featured" : "bp-card-standard") @(FruitThemeClass)" 
      tabindex="0"
      role="article"
-     aria-label="@($"{Product.Line} {Product.Fruit}: {Product.Description}")">
+     aria-label="@($"{p.Line} {p.Fruit}: {p.Description}")">
 
-    <div class="bp-card-media-stage" @onclick="HandleQuickView" role="button" tabindex="0" title="@($"{State.T("product.quickView")}: {Product.Line} {Product.Fruit}")" style="cursor: pointer;">
-        <img src="@Product.ImageUrl" 
-             alt="@Product.Line @Product.Fruit" 
+    <div class="bp-card-media-stage" @onclick="HandleQuickView" role="button" tabindex="0" title="@($"{State.T("product.quickView")}: {p.Line} {p.Fruit}")" style="cursor: pointer;">
+        <img src="@p.ImageUrl" 
+             alt="@p.Line @p.Fruit" 
              class="bp-card-product-img" 
              loading="lazy" />
         <div class="bp-card-media-gradient" aria-hidden="true"></div>
         <div class="bp-card-badge-pill">
-            <span class="bp-card-line-tag">@Product.Line</span>
+            <span class="bp-card-line-tag">@p.Line</span>
         </div>
     </div>
 
     <div class="bp-card-content-area">
         <div class="bp-card-header">
-            <h3 class="bp-card-fruit">@Product.Fruit</h3>
-            <span class="bp-card-subtitle-line">@State.T("product.linePrefix") @Product.Line</span>
+            <h3 class="bp-card-fruit">@p.Fruit</h3>
+            <span class="bp-card-subtitle-line">@State.T("product.linePrefix") @p.Line</span>
         </div>
 
         <div class="bp-card-body">
-            <p class="bp-card-desc">@Product.Description</p>
+            <p class="bp-card-desc">@p.Description</p>
             
             <div class="bp-card-footer">
                 @if (OnQuickView.HasDelegate)
@@ -33,18 +37,18 @@
                     <button type="button" 
                             class="bp-card-cta-link"
                             @onclick="HandleQuickView"
-                            aria-label="@($"{State.T("product.btnMore")}: {Product.Line} {Product.Fruit}")">
+                            aria-label="@($"{State.T("product.btnMore")}: {p.Line} {p.Fruit}")">
                         <span>@State.T("product.btnMore")</span>
                         <span class="bp-card-cta-arrow" aria-hidden="true">→</span>
                     </button>
                 }
                 else
                 {
-                    <a href="@Product.Url" 
+                    <a href="@p.Url" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="bp-card-cta-link"
-                       aria-label="@($"{State.T("product.btnMore")}: {Product.Line} {Product.Fruit}")">
+                       aria-label="@($"{State.T("product.btnMore")}: {p.Line} {p.Fruit}")">
                         <span>@State.T("product.btnMore")</span>
                         <span class="bp-card-cta-arrow" aria-hidden="true">→</span>
                     </a>
@@ -56,7 +60,7 @@
                             class="bp-card-quickview-btn" 
                             @onclick="HandleQuickView" 
                             title="@State.T("product.quickView")"
-                            aria-label="@($"{State.T("product.quickView")}: {Product.Line} {Product.Fruit}")">
+                            aria-label="@($"{State.T("product.quickView")}: {p.Line} {p.Fruit}")">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>

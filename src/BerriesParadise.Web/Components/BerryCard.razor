@@ -2,25 +2,29 @@
 @inject WebUiStateService State
 @implements IDisposable
 
+@{
+    var b = State.GetLocalizedBerry(Berry);
+}
+
 <div class="bp-berry-explorer-card @(IsActive ? "active" : "")" 
      @onclick="HandleClick" 
      @onmouseenter="HandleMouseEnter"
      @onmouseleave="HandleMouseLeave"
      role="button"
      tabindex="0"
-     aria-label="@($"Explorar {Berry.Name}: {Berry.Description}")"
-     style="--berry-accent: @Berry.AccentColor;">
+     aria-label="@($"Explorar {b.Name}: {b.Description}")"
+     style="--berry-accent: @b.AccentColor;">
      
     <div class="bp-berry-media-frame">
-        <img src="@Berry.ImageUrl" alt="@Berry.Name" class="bp-berry-img" loading="lazy" />
+        <img src="@b.ImageUrl" alt="@b.Name" class="bp-berry-img" loading="lazy" />
         <div class="bp-berry-tint-layer"></div>
     </div>
 
     <div class="bp-berry-content-overlay">
         <div class="bp-berry-meta">
             <span class="bp-berry-kicker">BERRIES PARADISE</span>
-            <h3 class="bp-berry-name">@Berry.Name</h3>
-            <p class="bp-berry-short-desc">@Berry.Description</p>
+            <h3 class="bp-berry-name">@b.Name</h3>
+            <p class="bp-berry-short-desc">@b.Description</p>
         </div>
 
         <div class="bp-berry-action-wrap">
