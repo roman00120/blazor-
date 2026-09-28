@@ -32,7 +32,7 @@
             </p>
 
             <div class="bp-presence-actions fade-up delay-3">
-                <button type="button" class="bp-presence-cta-btn" @onclick="() => State.OpenContactModal()">
+                <button type="button" class="bp-btn bp-btn-cyan bp-presence-cta-btn" @onclick="() => State.OpenContactModal()">
                     <span>@State.T("presence.btnExport")</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -275,9 +275,9 @@
         <!-- 3. RIGHT ZONE: 3 Clean Corporate Stat Cards with Soft Shadows & Watermarks -->
         <div class="bp-stats-column fade-up delay-2">
             <!-- Card 1: 42+ SKUS PARA RETAIL -->
-            <div class="bp-stat-card" role="button" tabindex="0" @onclick='() => State.SetSelectedProductById("big-delight-arandanos")'>
+            <div class="bp-stat-card" style="position: relative; overflow: hidden;" role="button" tabindex="0" @onclick='() => State.SetSelectedProductById("big-delight-arandanos")'>
                 <!-- Faint 3D Packaging Watermark in background -->
-                <svg class="bp-stat-watermark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg class="bp-stat-watermark" style="position: absolute; right: -10px; bottom: -15px; width: 90px; height: 90px; max-width: 90px; max-height: 90px; pointer-events: none; opacity: 0.06; color: #003B52;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="90" height="90">
                     <path d="M50 15 L85 35 L85 75 L50 95 L15 75 L15 35 Z" />
                     <line x1="50" y1="15" x2="50" y2="55" />
                     <line x1="85" y1="35" x2="50" y2="55" />
@@ -310,9 +310,9 @@
             </div>
 
             <!-- Card 2: 19+ PAÍSES A LOS QUE EXPORTAMOS -->
-            <div class="bp-stat-card" role="button" tabindex="0" @onclick='() => State.SetActiveProcessStep(5)'>
+            <div class="bp-stat-card" style="position: relative; overflow: hidden;" role="button" tabindex="0" @onclick='() => State.SetActiveProcessStep(5)'>
                 <!-- Faint Globe Watermark in background -->
-                <svg class="bp-stat-watermark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg class="bp-stat-watermark" style="position: absolute; right: -10px; bottom: -15px; width: 90px; height: 90px; max-width: 90px; max-height: 90px; pointer-events: none; opacity: 0.06; color: #003B52;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="90" height="90">
                     <circle cx="50" cy="50" r="40" />
                     <line x1="10" y1="50" x2="90" y2="50" />
                     <ellipse cx="50" cy="50" rx="20" ry="40" />
@@ -343,9 +343,9 @@
             </div>
 
             <!-- Card 3: 4 CONTINENTES -->
-            <div class="bp-stat-card" role="button" tabindex="0" @onclick="() => State.OpenContactModal()">
+            <div class="bp-stat-card" style="position: relative; overflow: hidden;" role="button" tabindex="0" @onclick="() => State.OpenContactModal()">
                 <!-- Faint Continents / Network Watermark in background -->
-                <svg class="bp-stat-watermark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg class="bp-stat-watermark" style="position: absolute; right: -10px; bottom: -15px; width: 90px; height: 90px; max-width: 90px; max-height: 90px; pointer-events: none; opacity: 0.06; color: #003B52;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="90" height="90">
                     <circle cx="25" cy="35" r="14" />
                     <circle cx="75" cy="25" r="18" />
                     <circle cx="35" cy="75" r="16" />

@@ -70,6 +70,19 @@ scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
     "publish_out\wwwroot\index.html" `
     "${server}:${remoteRoot}/index.html"
 
+# 4.1 Upload presence images
+Write-Host "Uploading presence section assets..." -ForegroundColor Yellow
+if (Test-Path "publish_out\wwwroot\images\hero_cinematic_landscape.jpg") {
+    scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
+        "publish_out\wwwroot\images\hero_cinematic_landscape.jpg" `
+        "${server}:${remoteRoot}/images/hero_cinematic_landscape.jpg"
+}
+if (Test-Path "publish_out\wwwroot\images\hero-berry-cluster-transparent.png") {
+    scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
+        "publish_out\wwwroot\images\hero-berry-cluster-transparent.png" `
+        "${server}:${remoteRoot}/images/hero-berry-cluster-transparent.png"
+}
+
 # 5. Clean remote _framework and unpack fresh bundle
 Write-Host "Packaging and uploading fresh _framework..." -ForegroundColor Yellow
 tar -czf framework_bundle.tar.gz -C "publish_out\wwwroot" _framework
