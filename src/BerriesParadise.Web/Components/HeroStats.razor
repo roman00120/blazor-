@@ -1,16 +1,27 @@
 @inject CompanyInformation CompanyInfo
 @inject WebUiStateService State
 @inject GeneticsCatalog Genetics
+@implements IDisposable
 
 <div class="bp-hero-metrics" role="region" aria-label="Métricas destacadas de Berries Paradise">
     @foreach (var stat in CompanyInfo.GetStats())
     {
+        var label = stat.Id switch
+        {
+            "skus" => State.T("presence.skus"),
+            "countries" => State.T("presence.countries"),
+            "genetics" => State.T("nav.genetics"),
+            _ => stat.Label
+        };
+
+        var displayVal = stat.Id == "genetics" ? State.T("genetics.title2") : stat.FormattedValue;
+
         <div class="bp-metric-badge anim-stat-stagger" 
              @onclick="() => HandleStatClick(stat.Id)" 
              role="button"
              tabindex="0"
-             aria-label="@stat.FormattedValue @stat.Label"
-             title="@stat.FormattedValue - @stat.Label">
+             aria-label="@displayVal @label"
+             title="@displayVal - @label">
             
             <div class="bp-metric-icon" aria-hidden="true">
                 @if (stat.IconSvg == "berry")
@@ -43,14 +54,24 @@
             </div>
 
             <div class="bp-metric-content">
-                <span class="bp-metric-number">@stat.FormattedValue</span>
-                <span class="bp-metric-label">@stat.Label</span>
+                <span class="bp-metric-number">@displayVal</span>
+                <span class="bp-metric-label">@label</span>
             </div>
         </div>
     }
 </div>
 
 @code {
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+
     private void HandleStatClick(string statId)
     {
         switch (statId)

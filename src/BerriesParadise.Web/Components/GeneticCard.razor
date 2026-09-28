@@ -1,12 +1,13 @@
 @using BerriesParadise.Core.Models
 @inject WebUiStateService State
+@implements IDisposable
 
 <div class="bp-genetic-editorial-card" 
      @onclick="HandleClick"
      role="button"
      tabindex="0"
-     aria-label="Ver detalles genéticos de @Variety.Name (@Variety.BerryType)"
-     title="@Variety.Name - @Variety.BerryType">
+     aria-label="@($"Ver detalles genéticos de {Variety.Name} ({Variety.BerryType})")"
+     title="@($"{Variety.Name} - {Variety.BerryType}")">
      
     <!-- Large photographic berry background image -->
     <div class="bp-genetic-card-media">
@@ -55,6 +56,16 @@
 
     [Parameter]
     public EventCallback<GeneticVariety> OnSelect { get; set; }
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
 
     private async Task HandleClick()
     {

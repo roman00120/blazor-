@@ -5,7 +5,7 @@
 {
     <div class="bp-modal-backdrop" @onclick="State.CloseContactModal" @onkeydown="HandleKeyDown" tabindex="-1">
         <div class="bp-modal-box" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
-            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseContactModal" aria-label="Cerrar ventana">✕</button>
+            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseContactModal" aria-label="@State.T("modal.close")">✕</button>
 
             @if (isSubmitted)
             {
@@ -15,41 +15,41 @@
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </div>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #ffffff;">¡Solicitud Recibida!</h3>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #ffffff;">@State.T("modal.contact.successTitle")</h3>
                     <p style="color: rgba(255, 255, 255, 0.8); max-width: 480px; margin: 0 auto 1.5rem auto;">
-                        Un director comercial de Berries Paradise se pondrá en contacto contigo en menos de 24 horas con nuestro catálogo de cotizaciones y disponibilidad.
+                        @State.T("modal.contact.successText")
                     </p>
-                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="ResetForm">Entendido</button>
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="ResetForm">@State.T("modal.contact.btnReset")</button>
                 </div>
             }
             else
             {
                 <h3 id="contact-modal-title" style="font-family: var(--font-display, 'Barlow Condensed', sans-serif); font-size: 2.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 0.5rem; color: #ffffff;">
-                    Contactar a <span style="color: var(--color-cyan, #08B8E8);">Ventas & Distribución</span>
+                    @State.T("modal.contact.titleMain") <span style="color: var(--color-cyan, #08B8E8);">@State.T("modal.contact.titleHighlight")</span>
                 </h3>
                 <p style="color: rgba(247, 250, 252, 0.75); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.8rem; font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);">
-                    Conéctate directamente con nuestro equipo de exportación para programas retail, mayoreo y abasto internacional.
+                    @State.T("modal.contact.subtitle")
                 </p>
 
                 <form @onsubmit="HandleSubmit" class="bp-contact-form" style="display: flex; flex-direction: column; gap: 1.15rem;">
                     <div class="bp-form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Nombre Completo *</label>
-                            <input type="text" required class="bp-form-input" placeholder="Ej. Roberto Mendoza" @bind="name" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.fullName")</label>
+                            <input type="text" required class="bp-form-input" placeholder="@State.T("modal.contact.placeholderName")" @bind="name" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
                         </div>
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Empresa / Retailer *</label>
-                            <input type="text" required class="bp-form-input" placeholder="Ej. Whole Foods / Walmart" @bind="company" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.company")</label>
+                            <input type="text" required class="bp-form-input" placeholder="@State.T("modal.contact.placeholderCompany")" @bind="company" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
                         </div>
                     </div>
 
                     <div class="bp-form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Correo Corporativo *</label>
-                            <input type="email" required class="bp-form-input" placeholder="roberto@empresa.com" @bind="email" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.email")</label>
+                            <input type="email" required class="bp-form-input" placeholder="name@company.com" @bind="email" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit;" />
                         </div>
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">País de Destino *</label>
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.destinationCountry")</label>
                             <select class="bp-form-select" @bind="country" style="width: 100%; box-sizing: border-box; background-color: #001f30; border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit; cursor: pointer;">
                                 <option value="Estados Unidos">Estados Unidos / USA</option>
                                 <option value="Canadá">Canadá</option>
@@ -65,7 +65,7 @@
 
                     <div class="bp-form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Producto de Interés</label>
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.productInterest")</label>
                             <select class="bp-form-select" @bind="berryType" style="width: 100%; box-sizing: border-box; background-color: #001f30; border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit; cursor: pointer;">
                                 <option value="Arándanos (Big Delight / Jumbo)">Arándanos (Big Delight / Jumbo)</option>
                                 <option value="Frambuesas (Amalia® / Orgánica)">Frambuesas (Amalia® / Orgánica)</option>
@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Volumen Estimado</label>
+                            <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.estimatedVolume")</label>
                             <select class="bp-form-select" @bind="volume" style="width: 100%; box-sizing: border-box; background-color: #001f30; border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; font-family: inherit; cursor: pointer;">
                                 <option value="1 a 5 Pallets / Semana">1 a 5 Pallets / Semana</option>
                                 <option value="1 a 3 Cargas completas (Truckload)">1 a 3 Cargas completas (Truckload)</option>
@@ -87,12 +87,12 @@
                     </div>
 
                     <div class="bp-form-group" style="display: flex; flex-direction: column; width: 100%;">
-                        <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">Especificaciones del Requerimiento</label>
-                        <textarea rows="3" class="bp-form-textarea" placeholder="Especifica calibres, tipo de clamshell o ventana de entrega requerida..." @bind="notes" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; resize: vertical; min-height: 85px; font-family: inherit;"></textarea>
+                        <label class="bp-form-label" style="display: block; font-family: var(--font-display, sans-serif); font-size: 0.8rem; font-weight: 700; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.45rem;">@State.T("modal.contact.specs")</label>
+                        <textarea rows="3" class="bp-form-textarea" placeholder="@State.T("modal.contact.placeholderSpecs")" @bind="notes" style="width: 100%; box-sizing: border-box; background: rgba(0, 24, 38, 0.85); border: 1px solid rgba(8, 184, 232, 0.35); border-radius: 8px; padding: 0.75rem 1rem; color: #ffffff; font-size: 0.95rem; outline: none; resize: vertical; min-height: 85px; font-family: inherit;"></textarea>
                     </div>
 
                     <button type="submit" class="bp-btn bp-btn-yellow" style="width: 100%; margin-top: 0.4rem; justify-content: center; font-size: 0.95rem; padding: 0.9rem 1.5rem; letter-spacing: 0.05em;">
-                        <span>Enviar Solicitud a Exportaciones</span>
+                        <span>@State.T("modal.contact.submit")</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.4rem;">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>

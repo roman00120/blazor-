@@ -92,7 +92,7 @@
             <!-- Stage Content Details -->
             <div class="bp-story-info-panel @(isChanging ? "switching" : "")">
                 <div class="bp-story-step-indicator">
-                    <span class="bp-step-badge">ETAPA 0@(current.StepNumber) / 05</span>
+                    <span class="bp-step-badge">@State.T("field.stage") 0@(current.StepNumber) / 05</span>
                     <span class="bp-step-highlight">@current.Highlight</span>
                 </div>
 
@@ -131,7 +131,7 @@
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
                             </svg>
-                            <span>Ver Video de Origen</span>
+                            <span>@State.T("field.btnVideo")</span>
                         </button>
 
                         <button type="button" class="bp-btn bp-btn-outline-cyan" @onclick="() => State.OpenContactModal()" style="padding: 0.75rem 1.35rem; font-size: 0.85rem;">
@@ -177,19 +177,16 @@
 
     protected override void OnInitialized()
     {
-        steps = Quality.GetProcessSteps();
+        steps = State.GetLocalizedProcessSteps();
         activeStepIndex = Math.Clamp(State.ActiveProcessStep - 1, 0, steps.Count - 1);
         State.OnChange += HandleStateChange;
     }
 
     private void HandleStateChange()
     {
-        var targetIndex = Math.Clamp(State.ActiveProcessStep - 1, 0, steps.Count - 1);
-        if (targetIndex != activeStepIndex)
-        {
-            activeStepIndex = targetIndex;
-            StateHasChanged();
-        }
+        steps = State.GetLocalizedProcessSteps();
+        activeStepIndex = Math.Clamp(State.ActiveProcessStep - 1, 0, steps.Count - 1);
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

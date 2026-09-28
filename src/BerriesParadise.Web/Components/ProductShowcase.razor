@@ -1,6 +1,5 @@
-@inject ProductCatalog Products
-@inject BerryCatalog Berries
 @inject WebUiStateService State
+@inject BerryCatalog Berries
 @implements IDisposable
 
 <section class="bp-product-portfolio-section" id="productos" role="region" aria-label="Portafolio de Productos Berries Paradise">
@@ -21,19 +20,22 @@
         <!-- FRUIT NAVIGATION: Large Visual Selectors (Blueberries, Raspberries, Blackberries, Strawberries) -->
         <nav class="bp-fruit-nav-container" aria-label="Seleccionar fruta">
             <div class="bp-fruit-nav-carousel" role="tablist">
-                @foreach (var fruit in AvailableFruits)
+                @foreach (var fruitId in AvailableFruitIds)
                 {
-                    var isSelected = SelectedFruitId.Equals(fruit.Id, StringComparison.OrdinalIgnoreCase);
-                    var fruitBerry = Berries.GetById(fruit.Id);
-                    var fruitImg = fruitBerry?.ImageUrl ?? $"images/categories/{fruit.Id}.jpg";
+                    var isSelected = SelectedFruitId.Equals(fruitId, StringComparison.OrdinalIgnoreCase);
+                    var fruitBerry = Berries.GetById(fruitId);
+                    var fruitImg = fruitBerry?.ImageUrl ?? $"images/categories/{fruitId}.jpg";
+                    var fruitName = State.T($"fruit.{fruitId}").ToUpperInvariant();
+                    var count = GetProductCountForFruit(fruitId);
+                    var countLabel = count == 1 ? State.T("product.countOption") : State.T("product.countLines");
                     
                     <button type="button" 
-                            class="bp-fruit-nav-item @(isSelected ? "active" : "") fruit-item-@fruit.Id"
-                            @onclick="() => SelectFruit(fruit.Id)"
+                            class="bp-fruit-nav-item @(isSelected ? "active" : "") fruit-item-@fruitId"
+                            @onclick="() => SelectFruit(fruitId)"
                             role="tab"
                             aria-selected="@(isSelected ? "true" : "false")"
-                            aria-controls="portfolio-grid-@fruit.Id"
-                            id="tab-fruit-@fruit.Id">
+                            aria-controls="portfolio-grid-@fruitId"
+                            id="tab-fruit-@fruitId">
                         
                         <div class="bp-fruit-nav-thumb-box">
                             <img src="@fruitImg" alt="" class="bp-fruit-nav-thumb" loading="lazy" />
@@ -41,9 +43,9 @@
                         </div>
 
                         <div class="bp-fruit-nav-info">
-                            <span class="bp-fruit-nav-name">@fruit.Name</span>
+                            <span class="bp-fruit-nav-name">@fruitName</span>
                             <span class="bp-fruit-nav-count">
-                                @GetProductCountForFruit(fruit.Id) @(GetProductCountForFruit(fruit.Id) == 1 ? "opción" : "líneas")
+                                @count @countLabel
                             </span>
                         </div>
 
@@ -92,14 +94,12 @@
 </section>
 
 @code {
-    private record FruitNavItem(string Id, string Name);
-
-    private static readonly List<FruitNavItem> AvailableFruits = new()
+    private static readonly List<string> AvailableFruitIds = new()
     {
-        new("arandanos", "ARÁNDANOS"),
-        new("frambuesas", "FRAMBUESAS"),
-        new("zarzamoras", "ZARZAMORAS"),
-        new("fresas", "FRESAS")
+        "arandanos",
+        "frambuesas",
+        "zarzamoras",
+        "fresas"
     };
 
     private string SelectedFruitId = "arandanos";
@@ -110,46 +110,58 @@
 
     protected override void OnInitialized()
     {
-        State.OnChange += StateHasChanged;
+        State.OnChange += HandleStateChange;
         LoadFruitProducts(SelectedFruitId);
+    }
+
+    private void HandleStateChange()
+    {
+        LoadFruitProducts(SelectedFruitId);
+        StateHasChanged();
     }
 
     private void SelectFruit(string fruitId)
     {
         if (SelectedFruitId.Equals(fruitId, StringComparison.OrdinalIgnoreCase)) return;
 
+        TransitionClass = "fade-out";
+        StateHasChanged();
+
         SelectedFruitId = fruitId;
         LoadFruitProducts(fruitId);
-        StateHasChanged();
+
+        Task.Delay(50).ContinueWith(_ =>
+        {
+            InvokeAsync(() =>
+            {
+                TransitionClass = "fade-in";
+                StateHasChanged();
+            });
+        });
     }
 
     private void LoadFruitProducts(string fruitId)
     {
-        var allFruitProducts = Products.GetByBerry(fruitId).ToList();
-        CurrentFruitProducts = allFruitProducts;
+        var all = State.GetLocalizedProducts();
+        CurrentFruitProducts = all
+            .Where(p => p.BerryId.Equals(fruitId, StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
         if (fruitId.Equals("arandanos", StringComparison.OrdinalIgnoreCase))
         {
-            // Requirement: Make BIG DELIGHT the featured product initially
-            FeaturedProduct = allFruitProducts.FirstOrDefault(p => p.Id == "big-delight-arandanos") 
-                              ?? allFruitProducts.FirstOrDefault();
-
-            // Then show the other blueberry products beneath it:
-            // CLÁSICA, ORGÁNICA, LEGACY, LEGACY JUMBO BLUES
-            SecondaryProducts = allFruitProducts.Where(p => p.Id != FeaturedProduct?.Id).ToList();
+            FeaturedProduct = CurrentFruitProducts.FirstOrDefault(p => p.IsFeatured) 
+                ?? CurrentFruitProducts.FirstOrDefault();
+            SecondaryProducts = CurrentFruitProducts.Where(p => p != FeaturedProduct).ToList();
         }
         else
         {
-            // For other fruits, feature the first one (e.g. Clásica) and display the rest in the subgrid
-            FeaturedProduct = allFruitProducts.FirstOrDefault();
-            SecondaryProducts = allFruitProducts.Skip(1).ToList();
+            FeaturedProduct = null;
+            SecondaryProducts = CurrentFruitProducts;
         }
     }
 
-    private int GetProductCountForFruit(string fruitId)
-    {
-        return Products.GetByBerry(fruitId).Count;
-    }
+    private int GetProductCountForFruit(string fruitId) =>
+        State.GetLocalizedProducts().Count(p => p.BerryId.Equals(fruitId, StringComparison.OrdinalIgnoreCase));
 
     private void HandleQuickView(Product product)
     {
@@ -158,6 +170,6 @@
 
     public void Dispose()
     {
-        State.OnChange -= StateHasChanged;
+        State.OnChange -= HandleStateChange;
     }
 }

@@ -36,7 +36,7 @@
         <!-- Desktop Magazine Editorial Showcase Stage -->
         <div class="bp-magazine-showcase-stage fade-up delay-2">
             <!-- LEFT: Large Food Photograph -->
-            <div class="bp-magazine-media-wrap" @onclick="() => State.OpenRecipeModal(CurrentRecipe)" role="button" tabindex="0" title="Ver receta completa de @CurrentRecipe.Title">
+            <div class="bp-magazine-media-wrap" @onclick="() => State.OpenRecipeModal(CurrentRecipe)" role="button" tabindex="0" title="@($"{State.T("recipes.btnView")}: {CurrentRecipe.Title}")">
                 <div class="bp-magazine-photo-box @(isTransitioning ? "transitioning" : "")">
                     <img src="@CurrentRecipe.ImageUrl" alt="@CurrentRecipe.Title" class="bp-magazine-img" loading="lazy" />
                     <div class="bp-magazine-overlay"></div>
@@ -70,16 +70,16 @@
                 <!-- Culinary Highlights Row -->
                 <div class="bp-magazine-specs-grid">
                     <div class="bp-mag-spec-card">
-                        <span class="spec-label">Porciones</span>
-                        <strong class="spec-val">@CurrentRecipe.Servings personas</strong>
+                        <span class="spec-label">@State.T("recipes.servings")</span>
+                        <strong class="spec-val">@CurrentRecipe.Servings @State.T("recipes.persons")</strong>
                     </div>
                     <div class="bp-mag-spec-card">
-                        <span class="spec-label">Calorías</span>
+                        <span class="spec-label">@State.T("recipes.calories")</span>
                         <strong class="spec-val">@CurrentRecipe.Calories kcal</strong>
                     </div>
                     <div class="bp-mag-spec-card">
-                        <span class="spec-label">Ingredientes</span>
-                        <strong class="spec-val">@CurrentRecipe.Ingredients.Count items frescos</strong>
+                        <span class="spec-label">@State.T("recipes.ingredients")</span>
+                        <strong class="spec-val">@CurrentRecipe.Ingredients.Count @State.T("recipes.freshItems")</strong>
                     </div>
                 </div>
 
@@ -98,8 +98,8 @@
                         <button type="button" 
                                 class="bp-mag-nav-arrow" 
                                 @onclick="PrevRecipe" 
-                                aria-label="Receta anterior"
-                                title="Receta anterior">
+                                aria-label="@State.T("recipes.prev")"
+                                title="@State.T("recipes.prev")">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>
@@ -108,8 +108,8 @@
                         <button type="button" 
                                 class="bp-mag-nav-arrow" 
                                 @onclick="NextRecipe" 
-                                aria-label="Receta siguiente"
-                                title="Receta siguiente">
+                                aria-label="@State.T("recipes.next")"
+                                title="@State.T("recipes.next")">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
@@ -135,7 +135,7 @@
                         <h4 class="bp-mobile-recipe-title">@r.Title</h4>
                         <p class="bp-mobile-recipe-desc">@r.Description</p>
                         <div class="bp-mobile-recipe-link">
-                            <span>VER RECETA</span>
+                            <span>@State.T("recipes.btnView")</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -155,11 +155,11 @@
     private bool isTransitioning = false;
 
     private Recipe CurrentRecipe => allRecipes.ElementAtOrDefault(currentIndex) 
-                                   ?? Recipes.GetFeatured();
+                                   ?? State.GetLocalizedRecipe(Recipes.GetFeatured());
 
     protected override void OnInitialized()
     {
-        allRecipes = Recipes.GetAll();
+        allRecipes = State.GetLocalizedRecipes();
         totalRecipes = allRecipes.Count;
         currentIndex = Math.Clamp(State.ActiveRecipeIndex, 0, totalRecipes - 1);
         State.OnChange += HandleStateChange;
@@ -167,11 +167,10 @@
 
     private void HandleStateChange()
     {
-        if (State.ActiveRecipeIndex != currentIndex)
-        {
-            currentIndex = Math.Clamp(State.ActiveRecipeIndex, 0, totalRecipes - 1);
-            StateHasChanged();
-        }
+        allRecipes = State.GetLocalizedRecipes();
+        totalRecipes = allRecipes.Count;
+        currentIndex = Math.Clamp(State.ActiveRecipeIndex, 0, totalRecipes - 1);
+        StateHasChanged();
     }
 
     private async Task SetRecipe(int index)

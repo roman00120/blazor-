@@ -41,10 +41,10 @@
                 var isSelected = (idx == activeIndex);
 
                 <button type="button" 
-                        class="bp-quality-step-tab @(isSelected ? "active" : "")"
-                        @onclick="() => SelectStep(idx)"
-                        role="tab"
-                        aria-selected="@(isSelected ? "true" : "false")"
+                        class="bp-quality-step-tab @(isSelected ? "active" : "")" 
+                        @onclick="() => SelectStep(idx)" 
+                        role="tab" 
+                        aria-selected="@(isSelected ? "true" : "false")" 
                         id="tab-quality-@fac.Key">
                     <span class="bp-tab-num">0@(fac.StepNumber)</span>
                     <span class="bp-tab-title">@fac.Title.ToUpper()</span>
@@ -65,9 +65,9 @@
                     <div class="bp-quality-image-overlay"></div>
                     <button type="button" 
                             class="bp-quality-play-btn" 
-                            @onclick="State.OpenVideoModal"
-                            @onclick:stopPropagation="true"
-                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: rgba(0, 24, 38, 0.82); border: 2px solid var(--color-cyan); color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(8px); transition: transform 0.25s, background-color 0.25s;"
+                            @onclick="State.OpenVideoModal" 
+                            @onclick:stopPropagation="true" 
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: rgba(0, 24, 38, 0.82); border: 2px solid var(--color-cyan); color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(8px); transition: transform 0.25s, background-color 0.25s;" 
                             aria-label="Ver video documental de origen">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px; color: var(--color-cyan);">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -79,13 +79,13 @@
                 <div class="bp-quality-floating-badges">
                     <div class="bp-spec-pill">
                         <span class="bp-spec-dot"></span>
-                        <span class="bp-spec-key">Capacidad:</span>
+                        <span class="bp-spec-key">@State.T("quality.capacity")</span>
                         <strong class="bp-spec-val">@active.Highlight</strong>
                     </div>
 
                     <div class="bp-spec-pill">
                         <span class="bp-spec-icon">🌡️</span>
-                        <span class="bp-spec-key">Temperatura:</span>
+                        <span class="bp-spec-key">@State.T("quality.temperature")</span>
                         <strong class="bp-spec-val">@active.TemperatureSpec</strong>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
             <div class="bp-quality-info-column @(isTransitioning ? "transitioning" : "")">
                 <!-- Step Indicator Pill -->
                 <div class="bp-quality-indicator-row">
-                    <span class="bp-quality-phase-kicker">PROCESO 0@(active.StepNumber) DE 05</span>
+                    <span class="bp-quality-phase-kicker">@string.Format(State.T("quality.processOf"), $"0{active.StepNumber}")</span>
                     <span class="bp-quality-audit-badge">@active.CertificationStandard</span>
                 </div>
 
@@ -109,12 +109,12 @@
                 <!-- Technical Precision Metrics -->
                 <div class="bp-quality-metrics-grid">
                     <div class="bp-tech-metric-card">
-                        <span class="bp-tech-label">Estándar de Control</span>
+                        <span class="bp-tech-label">@State.T("quality.controlStandard")</span>
                         <strong class="bp-tech-val">@active.CertificationStandard</strong>
                     </div>
 
                     <div class="bp-tech-metric-card">
-                        <span class="bp-tech-label">Parámetro Térmico</span>
+                        <span class="bp-tech-label">@State.T("quality.thermalParam")</span>
                         <strong class="bp-tech-val">@active.TemperatureSpec</strong>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                     </button>
 
                     <a href="#proceso" class="bp-btn bp-btn-outline-navy">
-                        <span>Ver Cronología de Cosecha</span>
+                        <span>@State.T("quality.btnHarvestTimeline")</span>
                     </a>
                 </div>
             </div>
@@ -145,7 +145,7 @@
 
     protected override void OnInitialized()
     {
-        facilities = Quality.GetFacilities();
+        facilities = State.GetLocalizedFacilities();
         var currentKey = State.ActiveFacilityKey;
         var foundIdx = facilities.ToList().FindIndex(f => f.Key == currentKey);
         activeIndex = (foundIdx >= 0) ? foundIdx : 0;
@@ -155,12 +155,13 @@
 
     private void HandleStateChange()
     {
+        facilities = State.GetLocalizedFacilities();
         var foundIdx = facilities.ToList().FindIndex(f => f.Key == State.ActiveFacilityKey);
-        if (foundIdx >= 0 && foundIdx != activeIndex)
+        if (foundIdx >= 0)
         {
             activeIndex = foundIdx;
-            StateHasChanged();
         }
+        StateHasChanged();
     }
 
     private async Task SelectStep(int index)

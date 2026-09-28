@@ -1,4 +1,3 @@
-@inject GeneticsCatalog Genetics
 @inject WebUiStateService State
 @implements IDisposable
 
@@ -30,7 +29,7 @@
 
         <!-- Four Large Photographic Editorial Cards (Desktop Grid / Mobile Horizontal Snap Carousel) -->
         <div class="bp-genetics-cards-strip" role="region" aria-label="Variedades de Genética Premium">
-            @foreach (var variety in Genetics.GetAll())
+            @foreach (var variety in LocalizedVarieties)
             {
                 <GeneticCard Variety="variety" OnSelect="HandleSelectVariety" />
             }
@@ -39,6 +38,8 @@
 </section>
 
 @code {
+    private IReadOnlyList<GeneticVariety> LocalizedVarieties => State.GetLocalizedVarieties();
+
     protected override void OnInitialized()
     {
         State.OnChange += StateHasChanged;
@@ -51,7 +52,7 @@
 
     private void OpenDefaultGenetics()
     {
-        var first = Genetics.GetAll().FirstOrDefault();
+        var first = LocalizedVarieties.FirstOrDefault();
         if (first != null)
         {
             State.OpenGeneticsModal(first);

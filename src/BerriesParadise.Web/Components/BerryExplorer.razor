@@ -1,4 +1,3 @@
-@inject BerryCatalog Berries
 @inject WebUiStateService State
 @implements IDisposable
 
@@ -19,7 +18,7 @@
 
             <div class="bp-our-berries-nav-hint fade-up delay-3">
                 <div class="bp-carousel-indicators" role="tablist" aria-label="Categorías de Berries">
-                    @foreach (var b in Berries.GetAll())
+                    @foreach (var b in LocalizedBerries)
                     {
                         var isSel = (ActiveBerry?.Id == b.Id);
                         <button type="button" 
@@ -46,7 +45,7 @@
 
         <!-- Premium Horizontal Visual Explorer (Desktop 4-column expandable strip / Mobile Touch Snap Carousel) -->
         <div class="bp-berries-explorer-strip" role="region" aria-label="Explorador visual de Berries">
-            @foreach (var berry in Berries.GetAll())
+            @foreach (var berry in LocalizedBerries)
             {
                 <BerryCard Berry="berry" 
                            IsActive="@(ActiveBerry?.Id == berry.Id)"
@@ -58,26 +57,27 @@
         <!-- Dynamic In-Page Quick Information Detail Panel (Driven strictly by Blazor State) -->
         @if (ActiveBerry != null)
         {
-            <div class="bp-berry-preview-bar fade-in" style="--accent-tone: @ActiveBerry.AccentColor;">
+            var localizedCurrent = State.GetLocalizedBerry(ActiveBerry);
+            <div class="bp-berry-preview-bar fade-in" style="--accent-tone: @localizedCurrent.AccentColor;">
                 <div class="bp-preview-meta">
                     <span class="bp-preview-badge">@State.T("berries.badge")</span>
-                    <h4 class="bp-preview-title">@ActiveBerry.Name <span class="bp-preview-sci">(@ActiveBerry.ScientificName)</span></h4>
-                    <p class="bp-preview-desc">@ActiveBerry.Description</p>
+                    <h4 class="bp-preview-title">@localizedCurrent.Name <span class="bp-preview-sci">(@localizedCurrent.ScientificName)</span></h4>
+                    <p class="bp-preview-desc">@localizedCurrent.Description</p>
                 </div>
 
                 <div class="bp-preview-stats">
                     <div class="bp-preview-stat-item">
                         <span class="stat-tag">@State.T("berries.availability")</span>
-                        <span class="stat-text">@ActiveBerry.Seasonality</span>
+                        <span class="stat-text">@localizedCurrent.Seasonality</span>
                     </div>
                     <div class="bp-preview-stat-item">
                         <span class="stat-tag">@State.T("berries.benefit")</span>
-                        <span class="stat-text">@ActiveBerry.HealthBenefits.Split(',').FirstOrDefault()</span>
+                        <span class="stat-text">@localizedCurrent.HealthBenefits.Split(',').FirstOrDefault()</span>
                     </div>
                 </div>
 
                 <div class="bp-preview-cta">
-                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="() => State.OpenBerryModal(ActiveBerry)">
+                    <button type="button" class="bp-btn bp-btn-cyan" @onclick="() => State.OpenBerryModal(localizedCurrent)">
                         <span>@State.T("berries.btnSheet")</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -92,11 +92,21 @@
 
 @code {
     private Berry? ActiveBerry;
+    private IReadOnlyList<Berry> LocalizedBerries => State.GetLocalizedBerries();
 
     protected override void OnInitialized()
     {
-        State.OnChange += StateHasChanged;
-        ActiveBerry = Berries.GetAll().FirstOrDefault();
+        State.OnChange += HandleStateChange;
+        ActiveBerry = LocalizedBerries.FirstOrDefault();
+    }
+
+    private void HandleStateChange()
+    {
+        if (ActiveBerry != null)
+        {
+            ActiveBerry = State.GetLocalizedBerry(ActiveBerry);
+        }
+        StateHasChanged();
     }
 
     private void HandleBerryHover(Berry berry)
@@ -117,6 +127,6 @@
 
     public void Dispose()
     {
-        State.OnChange -= StateHasChanged;
+        State.OnChange -= HandleStateChange;
     }
 }

@@ -8,16 +8,16 @@
 {
     <div class="bp-modal-backdrop" @onclick="State.CloseSearchModal" @onkeydown="HandleKeyDown" tabindex="-1">
         <div class="bp-modal-box" style="max-width: 640px;" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-labelledby="search-modal-title">
-            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseSearchModal" aria-label="Cerrar ventana">✕</button>
+            <button type="button" class="bp-modal-close-btn" @onclick="State.CloseSearchModal" aria-label="@State.T("modal.close")">✕</button>
 
             <h3 id="search-modal-title" style="font-size: 1.6rem; color: #ffffff; margin-bottom: 1rem;">
-                Buscar en <span style="color: var(--bp-cyan);">Berries Paradise</span>
+                @State.T("modal.search.title")
             </h3>
 
             <div style="position: relative; margin-bottom: 1.5rem;">
                 <input type="text" 
                        class="bp-form-input" 
-                       placeholder="Escribe un producto, genética o receta (ej. Big Delight, Sekoya, Pancakes)..." 
+                       placeholder="@State.T("modal.search.placeholder")" 
                        value="@State.SearchQuery" 
                        @oninput="HandleSearchInput"
                        autofocus />
@@ -27,16 +27,16 @@
             @if (!string.IsNullOrWhiteSpace(State.SearchQuery))
             {
                 var query = State.SearchQuery.Trim().ToLowerInvariant();
-                var prods = Products.GetAll().Where(p => p.Name.ToLowerInvariant().Contains(query) || p.BerryName.ToLowerInvariant().Contains(query) || p.Description.ToLowerInvariant().Contains(query)).ToList();
-                var gens = Genetics.GetAll().Where(g => g.Name.ToLowerInvariant().Contains(query) || g.BerryType.ToLowerInvariant().Contains(query) || g.Description.ToLowerInvariant().Contains(query)).ToList();
-                var recs = Recipes.GetAll().Where(r => r.Title.ToLowerInvariant().Contains(query) || r.Description.ToLowerInvariant().Contains(query)).ToList();
+                var prods = State.GetLocalizedProducts().Where(p => p.Name.ToLowerInvariant().Contains(query) || p.BerryName.ToLowerInvariant().Contains(query) || p.Description.ToLowerInvariant().Contains(query)).ToList();
+                var gens = State.GetLocalizedVarieties().Where(g => g.Name.ToLowerInvariant().Contains(query) || g.BerryType.ToLowerInvariant().Contains(query) || g.Description.ToLowerInvariant().Contains(query)).ToList();
+                var recs = State.GetLocalizedRecipes().Where(r => r.Title.ToLowerInvariant().Contains(query) || r.Description.ToLowerInvariant().Contains(query)).ToList();
 
                 var hasResults = prods.Any() || gens.Any() || recs.Any();
 
                 if (!hasResults)
                 {
                     <div style="text-align: center; padding: 2rem 0; color: rgba(255,255,255,0.6);">
-                        No se encontraron resultados para tu búsqueda.
+                        @State.T("modal.search.noResults")
                     </div>
                 }
                 else
@@ -45,7 +45,7 @@
                         @if (prods.Any())
                         {
                             <div>
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">Productos</span>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@State.T("modal.search.products")</span>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
                                     @foreach (var p in prods)
                                     {
@@ -64,7 +64,7 @@
                         @if (gens.Any())
                         {
                             <div>
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">Genética Varietal</span>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@State.T("modal.search.genetics")</span>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
                                     @foreach (var g in gens)
                                     {
@@ -83,7 +83,7 @@
                         @if (recs.Any())
                         {
                             <div>
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">Recetas</span>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bp-cyan); font-weight: 700;">@State.T("modal.search.recipes")</span>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
                                     @foreach (var r in recs)
                                     {

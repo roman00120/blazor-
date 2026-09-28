@@ -1,4 +1,6 @@
 @using BerriesParadise.Core.Models
+@inject WebUiStateService State
+@implements IDisposable
 
 <div class="bp-berry-explorer-card @(IsActive ? "active" : "")" 
      @onclick="HandleClick" 
@@ -6,7 +8,7 @@
      @onmouseleave="HandleMouseLeave"
      role="button"
      tabindex="0"
-     aria-label="Explorar @Berry.Name: @Berry.Description"
+     aria-label="@($"Explorar {Berry.Name}: {Berry.Description}")"
      style="--berry-accent: @Berry.AccentColor;">
      
     <div class="bp-berry-media-frame">
@@ -22,7 +24,7 @@
         </div>
 
         <div class="bp-berry-action-wrap">
-            <span class="bp-berry-cta-text">Conocer más</span>
+            <span class="bp-berry-cta-text">@State.T("berries.btnMore")</span>
             <span class="bp-berry-arrow-circle" aria-hidden="true">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -45,6 +47,16 @@
 
     [Parameter]
     public EventCallback<Berry> OnHover { get; set; }
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
 
     private async Task HandleClick()
     {
