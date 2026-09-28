@@ -32,11 +32,7 @@
                         aria-haspopup="listbox"
                         aria-label="@($"Selector de idioma. Idioma actual: {State.CurrentLanguage}")">
                     <span class="bp-lang-globe-icon" aria-hidden="true">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
+                        <FlagIcon Code="@State.CurrentLanguage" Width="20" Height="13" />
                     </span>
                     <span class="bp-lang-label">@State.CurrentLanguage</span>
                     <span class="bp-lang-arrow @(isLangDropdownOpen ? "open" : "")" aria-hidden="true">
@@ -58,7 +54,9 @@
                                     class="bp-lang-item @(isSelected ? "selected" : "")"
                                     @onclick="() => SelectLanguage(lang.Code)">
                                 <div class="bp-lang-item-left">
-                                    <span class="bp-lang-item-flag" aria-hidden="true">@lang.Flag</span>
+                                    <span class="bp-lang-item-flag" aria-hidden="true">
+                                        <FlagIcon Code="@lang.Code" Width="22" Height="15" />
+                                    </span>
                                     <span class="bp-lang-item-name">@lang.Name</span>
                                 </div>
                                 @if (isSelected)
@@ -131,11 +129,20 @@
         <div class="bp-mobile-drawer-lang">
             <span class="bp-drawer-lang-label">@State.T("footer.language")</span>
             <div class="bp-drawer-lang-buttons">
-                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => SelectLanguage("ES")'>ES</button>
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => SelectLanguage("ES")'>
+                    <FlagIcon Code="ES" Width="18" Height="12" />
+                    <span>ES</span>
+                </button>
                 <span class="bp-drawer-lang-sep">/</span>
-                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => SelectLanguage("EN")'>EN</button>
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => SelectLanguage("EN")'>
+                    <FlagIcon Code="EN" Width="18" Height="12" />
+                    <span>EN</span>
+                </button>
                 <span class="bp-drawer-lang-sep">/</span>
-                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => SelectLanguage("FR")'>FR</button>
+                <button type="button" class="bp-drawer-lang-btn @(State.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => SelectLanguage("FR")'>
+                    <FlagIcon Code="FR" Width="18" Height="12" />
+                    <span>FR</span>
+                </button>
             </div>
         </div>
 
@@ -154,13 +161,13 @@
     private bool isMobileMenuOpen = false;
     private bool isLangDropdownOpen = false;
 
-    private record LanguageItem(string Code, string Name, string Flag);
+    private record LanguageItem(string Code, string Name);
 
     private readonly LanguageItem[] languages = new[]
     {
-        new LanguageItem("ES", "Español", "🇲🇽"),
-        new LanguageItem("EN", "English", "🇺🇸"),
-        new LanguageItem("FR", "Français", "🇫🇷")
+        new LanguageItem("ES", "Español"),
+        new LanguageItem("EN", "English"),
+        new LanguageItem("FR", "Français")
     };
 
     protected override void OnInitialized()

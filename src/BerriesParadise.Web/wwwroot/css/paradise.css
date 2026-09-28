@@ -769,9 +769,11 @@ h6 {
 }
 
 .bp-lang-item-flag {
-    font-size: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     line-height: 1;
-    display: inline-block;
 }
 
 .bp-lang-item-name {
@@ -1102,6 +1104,7 @@ body.bp-menu-locked {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
 }
 
 .bp-drawer-lang-btn:active {
@@ -4951,6 +4954,9 @@ body.bp-menu-locked {
 }
 
 .bp-lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: none;
     border: none;
     color: rgba(255, 255, 255, 0.6);

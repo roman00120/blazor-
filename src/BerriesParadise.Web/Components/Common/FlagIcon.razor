@@ -1,0 +1,85 @@
+@namespace BerriesParadise.Web.Components.Common
+
+@* High-fidelity SVG Country Flags (Mexico, USA, France) - 100% OS Independent *@
+@switch (Code?.Trim().ToUpperInvariant())
+{
+    case "ES":
+    case "MX":
+        <svg class="bp-flag-icon @CssClass" viewBox="0 0 21 14" width="@Width" height="@Height" aria-hidden="true" style="@Style">
+            <defs>
+                <clipPath id="bp-flag-clip-mx"><rect width="21" height="14" rx="2.5" /></clipPath>
+            </defs>
+            <g clip-path="url(#bp-flag-clip-mx)">
+                <rect width="7" height="14" fill="#006847" />
+                <rect x="7" width="7" height="14" fill="#FFFFFF" />
+                <rect x="14" width="7" height="14" fill="#CE1126" />
+                <!-- Mexican Coat of Arms (Eagle & Nopal) -->
+                <circle cx="10.5" cy="7" r="2.1" fill="#8B5A2B" opacity="0.9" />
+                <circle cx="10.5" cy="6.6" r="1.2" fill="#5C4033" />
+                <path d="M9.3 8.3 Q10.5 8.9 11.7 8.3" stroke="#2E7D32" stroke-width="0.7" fill="none" />
+                <circle cx="10.5" cy="5.8" r="0.55" fill="#D4AF37" />
+            </g>
+            <rect width="21" height="14" rx="2.5" fill="none" stroke="rgba(0, 32, 50, 0.18)" stroke-width="0.8" />
+        </svg>
+        break;
+
+    case "EN":
+    case "US":
+        <svg class="bp-flag-icon @CssClass" viewBox="0 0 21 14" width="@Width" height="@Height" aria-hidden="true" style="@Style">
+            <defs>
+                <clipPath id="bp-flag-clip-us"><rect width="21" height="14" rx="2.5" /></clipPath>
+            </defs>
+            <g clip-path="url(#bp-flag-clip-us)">
+                <!-- 13 Alternating Red & White Stripes -->
+                <rect width="21" height="14" fill="#B22234" />
+                <rect y="1.08" width="21" height="1.08" fill="#FFFFFF" />
+                <rect y="3.23" width="21" height="1.08" fill="#FFFFFF" />
+                <rect y="5.38" width="21" height="1.08" fill="#FFFFFF" />
+                <rect y="7.54" width="21" height="1.08" fill="#FFFFFF" />
+                <rect y="9.69" width="21" height="1.08" fill="#FFFFFF" />
+                <rect y="11.85" width="21" height="1.08" fill="#FFFFFF" />
+                <!-- Blue Canton with Star Grid -->
+                <rect width="8.8" height="7.54" fill="#3C3B6E" />
+                <circle cx="2.2" cy="1.9" r="0.55" fill="#FFFFFF" />
+                <circle cx="4.4" cy="1.9" r="0.55" fill="#FFFFFF" />
+                <circle cx="6.6" cy="1.9" r="0.55" fill="#FFFFFF" />
+                <circle cx="3.3" cy="3.8" r="0.55" fill="#FFFFFF" />
+                <circle cx="5.5" cy="3.8" r="0.55" fill="#FFFFFF" />
+                <circle cx="2.2" cy="5.7" r="0.55" fill="#FFFFFF" />
+                <circle cx="4.4" cy="5.7" r="0.55" fill="#FFFFFF" />
+                <circle cx="6.6" cy="5.7" r="0.55" fill="#FFFFFF" />
+            </g>
+            <rect width="21" height="14" rx="2.5" fill="none" stroke="rgba(0, 32, 50, 0.18)" stroke-width="0.8" />
+        </svg>
+        break;
+
+    case "FR":
+        <svg class="bp-flag-icon @CssClass" viewBox="0 0 21 14" width="@Width" height="@Height" aria-hidden="true" style="@Style">
+            <defs>
+                <clipPath id="bp-flag-clip-fr"><rect width="21" height="14" rx="2.5" /></clipPath>
+            </defs>
+            <g clip-path="url(#bp-flag-clip-fr)">
+                <rect width="7" height="14" fill="#002654" />
+                <rect x="7" width="7" height="14" fill="#FFFFFF" />
+                <rect x="14" width="7" height="14" fill="#ED2939" />
+            </g>
+            <rect width="21" height="14" rx="2.5" fill="none" stroke="rgba(0, 32, 50, 0.18)" stroke-width="0.8" />
+        </svg>
+        break;
+
+    default:
+        <svg class="bp-flag-icon @CssClass" viewBox="0 0 24 24" width="@Width" height="@Height" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="@Style">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        break;
+}
+
+@code {
+    [Parameter] public string Code { get; set; } = "ES";
+    [Parameter] public int Width { get; set; } = 21;
+    [Parameter] public int Height { get; set; } = 14;
+    [Parameter] public string CssClass { get; set; } = "";
+    [Parameter] public string Style { get; set; } = "border-radius: 2.5px; flex-shrink: 0; display: inline-block; vertical-align: middle;";
+}

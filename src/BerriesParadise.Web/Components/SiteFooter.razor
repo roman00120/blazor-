@@ -18,11 +18,20 @@
             <div class="bp-footer-language-wrap" role="region" aria-label="Seleccionar idioma">
                 <span class="bp-lang-label">@State.T("footer.language")</span>
                 <div class="bp-lang-selector">
-                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => State.SetLanguage("ES")'>ES</button>
+                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "ES" ? "active" : "")" @onclick='() => State.SetLanguage("ES")'>
+                        <FlagIcon Code="ES" Width="16" Height="11" />
+                        <span>ES</span>
+                    </button>
                     <span class="bp-lang-divider">/</span>
-                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => State.SetLanguage("EN")'>EN</button>
+                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "EN" ? "active" : "")" @onclick='() => State.SetLanguage("EN")'>
+                        <FlagIcon Code="EN" Width="16" Height="11" />
+                        <span>EN</span>
+                    </button>
                     <span class="bp-lang-divider">/</span>
-                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => State.SetLanguage("FR")'>FR</button>
+                    <button type="button" class="bp-lang-btn @(State.CurrentLanguage == "FR" ? "active" : "")" @onclick='() => State.SetLanguage("FR")'>
+                        <FlagIcon Code="FR" Width="16" Height="11" />
+                        <span>FR</span>
+                    </button>
                 </div>
             </div>
         </div>
