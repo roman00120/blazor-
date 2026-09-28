@@ -85,15 +85,11 @@
             </div>
 
             <!-- World Map SVG Canvas -->
-            <svg class="bp-map-svg" viewBox="0 0 1000 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa de distribución de exportaciones internacionales de Berries Paradise">
+            <svg class="bp-map-svg" viewBox="0 0 1916 821" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa de distribución de exportaciones internacionales de Berries Paradise">
                 <defs>
-                    <linearGradient id="mapLandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#002b40" stop-opacity="0.9" />
-                        <stop offset="100%" stop-color="#001a28" stop-opacity="0.9" />
-                    </linearGradient>
                     <radialGradient id="mexicoGlow" cx="50%" cy="50%" r="50%">
                         <stop offset="0%" stop-color="#28c76f" stop-opacity="1" />
-                        <stop offset="60%" stop-color="#00b4e6" stop-opacity="0.6" />
+                        <stop offset="50%" stop-color="#00b4e6" stop-opacity="0.7" />
                         <stop offset="100%" stop-color="#00b4e6" stop-opacity="0" />
                     </radialGradient>
                     <radialGradient id="destinationPulse" cx="50%" cy="50%" r="50%">
@@ -101,173 +97,154 @@
                         <stop offset="40%" stop-color="#00e5ff" stop-opacity="0.8" />
                         <stop offset="100%" stop-color="#00b4e6" stop-opacity="0" />
                     </radialGradient>
-                    <filter id="cometGlow" x="-30%" y="-30%" width="160%" height="160%">
-                        <feGaussianBlur stdDeviation="2.5" result="blur" />
+                    <filter id="cometGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
                         <feMerge>
                             <feMergeNode in="blur" />
                             <feMergeNode in="SourceGraphic" />
                         </feMerge>
                     </filter>
-                    <pattern id="matrixGrid" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
-                        <circle cx="2" cy="2" r="0.8" fill="#00b4e6" fill-opacity="0.12"/>
+                    <pattern id="matrixGrid" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1" fill="#00b4e6" fill-opacity="0.12"/>
                     </pattern>
                 </defs>
 
                 <!-- Background Subtle Matrix Grid -->
-                <rect width="1000" height="520" fill="url(#matrixGrid)" />
+                <rect width="1916" height="821" fill="url(#matrixGrid)" />
 
                 <!-- Stylized Latitude / Longitude Coordinate Lines -->
-                <line x1="0" y1="130" x2="1000" y2="130" stroke="#00b4e6" stroke-width="0.5" stroke-opacity="0.16"/>
-                <line x1="0" y1="260" x2="1000" y2="260" stroke="#00b4e6" stroke-width="0.6" stroke-opacity="0.2"/>
-                <line x1="0" y1="390" x2="1000" y2="390" stroke="#00b4e6" stroke-width="0.5" stroke-opacity="0.16"/>
-                <line x1="250" y1="0" x2="250" y2="520" stroke="#00b4e6" stroke-width="0.4" stroke-opacity="0.14"/>
-                <line x1="500" y1="0" x2="500" y2="520" stroke="#00b4e6" stroke-width="0.4" stroke-opacity="0.14"/>
-                <line x1="750" y1="0" x2="750" y2="520" stroke="#00b4e6" stroke-width="0.4" stroke-opacity="0.14"/>
+                <line x1="0" y1="205" x2="1916" y2="205" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.15"/>
+                <line x1="0" y1="410" x2="1916" y2="410" stroke="#00b4e6" stroke-width="1.0" stroke-opacity="0.22"/>
+                <line x1="0" y1="615" x2="1916" y2="615" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.15"/>
+                <line x1="479" y1="0" x2="479" y2="821" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.15"/>
+                <line x1="958" y1="0" x2="958" y2="821" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.15"/>
+                <line x1="1437" y1="0" x2="1437" y2="821" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.15"/>
 
-                <!-- Controllable Map Group (Zoomable) -->
+                <!-- Controllable Map Group (Zoomable & Interactive) -->
                 <g style="@transformStyle">
-                    <!-- CONTINENTS -->
-                    <!-- North America -->
-                    <path d="M120 45 L175 42 L230 58 L275 75 L310 105 L305 130 L290 155 L260 175 L235 200 L210 215 L190 200 L170 185 L155 165 L140 145 L125 115 L115 85 L115 60 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.3" stroke-opacity="0.85"/>
-                    <!-- Greenland -->
-                    <path d="M295 20 L335 18 L355 35 L345 55 L320 60 L300 48 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="0.8" stroke-opacity="0.6"/>
-                    <!-- Central America / Mexico Base -->
-                    <path d="M210 215 L232 222 L250 238 L258 255 L250 270 L238 285 L225 292 L212 284 L204 266 L202 248 L206 230 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.4" stroke-opacity="0.9"/>
+                    <!-- High-Resolution World Map Provided by User -->
+                    <image href="images/world-map-cyan.webp" x="0" y="0" width="1916" height="821" preserveAspectRatio="xMidYMid meet" opacity="0.9" />
 
-                    <!-- South America -->
-                    <path d="M255 295 L285 288 L312 296 L332 315 L346 345 L350 380 L342 418 L328 450 L304 476 L280 486 L262 472 L250 448 L244 415 L242 380 L246 345 L250 318 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.3" stroke-opacity="0.85"/>
-
-                    <!-- Europe & UK -->
-                    <path d="M495 65 L530 60 L568 70 L585 86 L578 108 L560 120 L540 125 L516 116 L502 96 L496 78 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.2" stroke-opacity="0.85"/>
-                    <path d="M485 102 L510 96 L526 112 L520 132 L500 138 L484 126 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1" stroke-opacity="0.8"/>
-                    <path d="M500 44 L520 36 L534 50 L526 66 L508 70 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="0.9" stroke-opacity="0.75"/>
-
-                    <!-- Africa -->
-                    <path d="M498 148 L546 138 L586 148 L610 178 L622 220 L620 262 L608 306 L588 350 L562 388 L532 404 L508 390 L486 356 L470 318 L466 276 L472 232 L484 190 L492 168 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.3" stroke-opacity="0.85"/>
-
-                    <!-- Middle East -->
-                    <path d="M608 132 L642 124 L674 136 L688 160 L680 182 L660 190 L634 182 L614 162 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.1" stroke-opacity="0.8"/>
-
-                    <!-- Northern Asia / Russia -->
-                    <path d="M578 46 L690 34 L800 42 L866 60 L888 82 L876 104 L832 112 L776 106 L720 100 L665 104 L615 96 L588 80 L576 60 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.2" stroke-opacity="0.85"/>
-
-                    <!-- South Asia / India -->
-                    <path d="M684 156 L730 146 L762 160 L772 190 L762 224 L740 250 L718 258 L700 242 L690 214 L682 186 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.1" stroke-opacity="0.8"/>
-
-                    <!-- East Asia / China / Japan -->
-                    <path d="M776 102 L842 94 L894 105 L918 134 L916 172 L894 194 L862 202 L834 190 L806 170 L790 144 L780 122 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.2" stroke-opacity="0.85"/>
-                    <path d="M934 118 L948 112 L960 124 L952 144 L940 148 L930 134 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="0.9" stroke-opacity="0.8"/>
-
-                    <!-- Southeast Asia -->
-                    <path d="M838 190 L870 184 L896 198 L908 226 L896 244 L866 248 L844 234 L832 208 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="0.9" stroke-opacity="0.75"/>
-
-                    <!-- Australia -->
-                    <path d="M842 338 L904 322 L950 332 L968 358 L966 400 L942 430 L906 442 L870 432 L844 410 L826 378 L826 348 Z" fill="url(#mapLandGradient)" stroke="#00b4e6" stroke-width="1.2" stroke-opacity="0.85"/>
-
-                    <!-- === RADIANT EXPORT ARCS FROM MEXICO (~226, 240) === -->
-                    <!-- 1. Arc to USA West (California / Pacific NW) -->
-                    <path d="M226 240 Q 190 190 175 145" stroke="#00b4e6" stroke-width="1.8" stroke-dasharray="5 4" fill="none" stroke-opacity="0.85">
-                        <animate attributeName="stroke-dashoffset" from="60" to="0" dur="2.4s" repeatCount="indefinite"/>
+                    <!-- === RADIANT EXPORT ARCS FROM JALISCO, MÉXICO (370, 375) === -->
+                    <!-- 1. Arc to USA West (Los Angeles / California) (285, 295) -->
+                    <path d="M 370 375 Q 320 330 285 295" stroke="#00b4e6" stroke-width="2.5" stroke-dasharray="8 6" fill="none" stroke-opacity="0.88">
+                        <animate attributeName="stroke-dashoffset" from="80" to="0" dur="2.4s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 2. Arc to USA East & Canada (New York / Montreal) -->
-                    <path d="M226 240 Q 240 170 270 125" stroke="#00b4e6" stroke-width="2" stroke-dasharray="6 4" fill="none" stroke-opacity="0.9">
-                        <animate attributeName="stroke-dashoffset" from="80" to="0" dur="2.8s" repeatCount="indefinite"/>
+                    <!-- 2. Arc to USA Midwest (Chicago) (445, 260) -->
+                    <path d="M 370 375 Q 395 305 445 260" stroke="#00b4e6" stroke-width="2.5" stroke-dasharray="8 6" fill="none" stroke-opacity="0.88">
+                        <animate attributeName="stroke-dashoffset" from="80" to="0" dur="2.6s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 3. Radiant Arc to Europe (Rotterdam, UK, Germany) -->
-                    <path d="M226 240 Q 360 110 528 108" stroke="#00b4e6" stroke-width="2.2" stroke-dasharray="7 5" fill="none">
-                        <animate attributeName="stroke-dashoffset" from="220" to="0" dur="4.2s" repeatCount="indefinite"/>
+                    <!-- 3. Arc to USA East (New York / Canada) (515, 265) -->
+                    <path d="M 370 375 Q 435 310 515 265" stroke="#00b4e6" stroke-width="2.8" stroke-dasharray="9 6" fill="none" stroke-opacity="0.92">
+                        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.8s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 4. Radiant Arc to South Europe / Mediterranean -->
-                    <path d="M226 240 Q 350 140 505 128" stroke="#00b4e6" stroke-width="1.8" stroke-dasharray="6 4" fill="none" stroke-opacity="0.85">
-                        <animate attributeName="stroke-dashoffset" from="180" to="0" dur="3.8s" repeatCount="indefinite"/>
+                    <!-- 4. Radiant Arc to UK (London) (930, 210) -->
+                    <path d="M 370 375 Q 630 180 930 210" stroke="#00b4e6" stroke-width="3" stroke-dasharray="10 7" fill="none">
+                        <animate attributeName="stroke-dashoffset" from="240" to="0" dur="4.2s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 5. Arc to South America (Colombia, Brazil, Chile) -->
-                    <path d="M226 240 Q 248 300 295 385" stroke="#00b4e6" stroke-width="2" stroke-dasharray="6 4" fill="none">
-                        <animate attributeName="stroke-dashoffset" from="120" to="0" dur="3.2s" repeatCount="indefinite"/>
+                    <!-- 5. Radiant Arc to Central Europe (Rotterdam / Alemania) (975, 215) -->
+                    <path d="M 370 375 Q 660 190 975 215" stroke="#00b4e6" stroke-width="3.2" stroke-dasharray="10 7" fill="none">
+                        <animate attributeName="stroke-dashoffset" from="260" to="0" dur="4.4s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 6. Radiant Arc to Middle East (UAE / Dubai) -->
-                    <path d="M226 240 Q 420 135 640 160" stroke="#00b4e6" stroke-width="1.8" stroke-dasharray="7 5" fill="none">
-                        <animate attributeName="stroke-dashoffset" from="280" to="0" dur="5s" repeatCount="indefinite"/>
+                    <!-- 6. Radiant Arc to Middle East (Dubai / EAU) (1225, 360) -->
+                    <path d="M 370 375 Q 780 140 1225 360" stroke="#00b4e6" stroke-width="2.6" stroke-dasharray="9 7" fill="none">
+                        <animate attributeName="stroke-dashoffset" from="320" to="0" dur="5.2s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 7. Radiant Arc to East Asia (Tokyo, Japan & China) -->
-                    <path d="M226 240 Q 520 50 860 150" stroke="#00b4e6" stroke-width="2" stroke-dasharray="8 6" fill="none" stroke-opacity="0.9">
-                        <animate attributeName="stroke-dashoffset" from="460" to="0" dur="6s" repeatCount="indefinite"/>
+                    <!-- 7. Radiant Arc to East Asia (Tokyo, Japón) (1625, 300) -->
+                    <path d="M 370 375 Q 980 50 1625 300" stroke="#00b4e6" stroke-width="3" stroke-dasharray="11 8" fill="none" stroke-opacity="0.92">
+                        <animate attributeName="stroke-dashoffset" from="480" to="0" dur="6.2s" repeatCount="indefinite"/>
                     </path>
-                    <!-- 8. Transoceanic Arc to Australia (Sydney) -->
-                    <path d="M226 240 Q 540 260 885 380" stroke="#00b4e6" stroke-width="1.6" stroke-dasharray="7 5" fill="none" stroke-opacity="0.8">
-                        <animate attributeName="stroke-dashoffset" from="420" to="0" dur="6.5s" repeatCount="indefinite"/>
+                    <!-- 8. Radiant Arc to East Asia (Hong Kong / Singapur) (1490, 380) -->
+                    <path d="M 370 375 Q 910 100 1490 380" stroke="#00b4e6" stroke-width="2.6" stroke-dasharray="10 7" fill="none" stroke-opacity="0.88">
+                        <animate attributeName="stroke-dashoffset" from="440" to="0" dur="5.8s" repeatCount="indefinite"/>
+                    </path>
+                    <!-- 9. Arc to South America (Colombia / Chile) (490, 520) -->
+                    <path d="M 370 375 Q 420 460 490 520" stroke="#00b4e6" stroke-width="2.4" stroke-dasharray="8 6" fill="none">
+                        <animate attributeName="stroke-dashoffset" from="140" to="0" dur="3.4s" repeatCount="indefinite"/>
                     </path>
 
                     <!-- === LUMINOUS COMETS TRAVELING CONTINUOUSLY ALONG ARCS === -->
-                    <circle r="3" fill="#ffffff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 190 190 175 145" dur="2.4s" repeatCount="indefinite" />
+                    <circle r="4" fill="#ffffff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 320 330 285 295" dur="2.4s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3" fill="#00e5ff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 240 170 270 125" dur="2.8s" repeatCount="indefinite" />
+                    <circle r="4" fill="#00e5ff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 395 305 445 260" dur="2.6s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3.5" fill="#ffffff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 360 110 528 108" dur="4.2s" repeatCount="indefinite" />
+                    <circle r="4.5" fill="#ffffff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 435 310 515 265" dur="2.8s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3" fill="#00e5ff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 248 300 295 385" dur="3.2s" repeatCount="indefinite" />
+                    <circle r="4" fill="#00e5ff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 630 180 930 210" dur="4.2s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3" fill="#ffffff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 420 135 640 160" dur="5s" repeatCount="indefinite" />
+                    <circle r="5" fill="#ffffff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 660 190 975 215" dur="4.4s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3.5" fill="#00e5ff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 520 50 860 150" dur="6s" repeatCount="indefinite" />
+                    <circle r="4" fill="#00e5ff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 780 140 1225 360" dur="5.2s" repeatCount="indefinite" />
                     </circle>
-                    <circle r="3" fill="#ffffff" filter="url(#cometGlow)">
-                        <animateMotion path="M226 240 Q 540 260 885 380" dur="6.5s" repeatCount="indefinite" />
+                    <circle r="5" fill="#ffffff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 980 50 1625 300" dur="6.2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle r="4" fill="#00e5ff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 910 100 1490 380" dur="5.8s" repeatCount="indefinite" />
+                    </circle>
+                    <circle r="4" fill="#00e5ff" filter="url(#cometGlow)">
+                        <animateMotion path="M 370 375 Q 420 460 490 520" dur="3.4s" repeatCount="indefinite" />
                     </circle>
 
                     <!-- === DESTINATION NODES WITH HALO GLOWS === -->
-                    <!-- USA West Node -->
-                    <circle cx="175" cy="145" r="10" fill="url(#destinationPulse)" opacity="0.6"/>
-                    <circle cx="175" cy="145" r="4" fill="#ffffff" stroke="#00b4e6" stroke-width="1.8"/>
+                    <!-- USA West (285, 295) -->
+                    <circle cx="285" cy="295" r="16" fill="url(#destinationPulse)" opacity="0.6"/>
+                    <circle cx="285" cy="295" r="6" fill="#ffffff" stroke="#00b4e6" stroke-width="2.5"/>
 
-                    <!-- USA East Node -->
-                    <circle cx="270" cy="125" r="11" fill="url(#destinationPulse)" opacity="0.65"/>
-                    <circle cx="270" cy="125" r="4.5" fill="#ffffff" stroke="#00b4e6" stroke-width="1.8"/>
+                    <!-- USA Midwest (445, 260) -->
+                    <circle cx="445" cy="260" r="14" fill="url(#destinationPulse)" opacity="0.6"/>
+                    <circle cx="445" cy="260" r="5.5" fill="#ffffff" stroke="#00b4e6" stroke-width="2.5"/>
 
-                    <!-- Europe Hub Cluster (UK, Rotterdam, Spain) -->
-                    <circle cx="528" cy="108" r="14" fill="url(#destinationPulse)" opacity="0.7"/>
-                    <circle cx="528" cy="108" r="5" fill="#ffffff" stroke="#00b4e6" stroke-width="2"/>
-                    <circle cx="505" cy="128" r="3.5" fill="#00e5ff" stroke="#001826" stroke-width="1"/>
-                    <circle cx="548" cy="98" r="3.5" fill="#00e5ff" stroke="#001826" stroke-width="1"/>
+                    <!-- USA East / NY (515, 265) -->
+                    <circle cx="515" cy="265" r="18" fill="url(#destinationPulse)" opacity="0.65"/>
+                    <circle cx="515" cy="265" r="7" fill="#ffffff" stroke="#00b4e6" stroke-width="3"/>
 
-                    <!-- South America Node -->
-                    <circle cx="295" cy="385" r="11" fill="url(#destinationPulse)" opacity="0.6"/>
-                    <circle cx="295" cy="385" r="4" fill="#ffffff" stroke="#00b4e6" stroke-width="1.8"/>
+                    <!-- Europe / Rotterdam & UK (930, 210) & (975, 215) -->
+                    <circle cx="930" cy="210" r="15" fill="url(#destinationPulse)" opacity="0.65"/>
+                    <circle cx="930" cy="210" r="6" fill="#00e5ff" stroke="#ffffff" stroke-width="2"/>
+                    <circle cx="975" cy="215" r="20" fill="url(#destinationPulse)" opacity="0.75"/>
+                    <circle cx="975" cy="215" r="7.5" fill="#ffffff" stroke="#00b4e6" stroke-width="3"/>
 
-                    <!-- Middle East Node -->
-                    <circle cx="640" cy="160" r="11" fill="url(#destinationPulse)" opacity="0.6"/>
-                    <circle cx="640" cy="160" r="4" fill="#ffffff" stroke="#00b4e6" stroke-width="1.8"/>
+                    <!-- Middle East / Dubai (1225, 360) -->
+                    <circle cx="1225" cy="360" r="16" fill="url(#destinationPulse)" opacity="0.65"/>
+                    <circle cx="1225" cy="360" r="6" fill="#ffffff" stroke="#00b4e6" stroke-width="2.5"/>
 
-                    <!-- Asia Node (Japan / China) -->
-                    <circle cx="860" cy="150" r="13" fill="url(#destinationPulse)" opacity="0.65"/>
-                    <circle cx="860" cy="150" r="4.5" fill="#ffffff" stroke="#00b4e6" stroke-width="2"/>
-                    <circle cx="940" cy="130" r="3.5" fill="#00e5ff" stroke="#001826" stroke-width="1"/>
+                    <!-- Japan / Tokyo (1625, 300) -->
+                    <circle cx="1625" cy="300" r="19" fill="url(#destinationPulse)" opacity="0.7"/>
+                    <circle cx="1625" cy="300" r="7" fill="#ffffff" stroke="#00b4e6" stroke-width="3"/>
 
-                    <!-- Australia Node -->
-                    <circle cx="885" cy="380" r="11" fill="url(#destinationPulse)" opacity="0.6"/>
-                    <circle cx="885" cy="380" r="4" fill="#ffffff" stroke="#00b4e6" stroke-width="1.8"/>
+                    <!-- Asia-Pacífico / Hong Kong (1490, 380) -->
+                    <circle cx="1490" cy="380" r="16" fill="url(#destinationPulse)" opacity="0.65"/>
+                    <circle cx="1490" cy="380" r="6" fill="#00e5ff" stroke="#ffffff" stroke-width="2"/>
 
-                    <!-- === ORIGIN HUB: MÉXICO === -->
-                    <!-- Mexico territory highlighted in vibrant green/cyan -->
-                    <path d="M208 220 L230 228 L244 242 L250 256 L242 268 L232 278 L220 282 L210 274 L204 256 L202 240 Z" fill="#28c76f" fill-opacity="0.85" stroke="#00e5ff" stroke-width="1.5"/>
+                    <!-- South America (490, 520) -->
+                    <circle cx="490" cy="520" r="14" fill="url(#destinationPulse)" opacity="0.6"/>
+                    <circle cx="490" cy="520" r="5" fill="#ffffff" stroke="#00b4e6" stroke-width="2"/>
 
+                    <!-- === ORIGIN HUB: JALISCO, MÉXICO (370, 375) === -->
                     <!-- Pulsating Sonar Waves -->
-                    <circle cx="226" cy="240" r="28" fill="url(#mexicoGlow)" opacity="0.6">
-                        <animate attributeName="r" values="14;30;14" dur="2.4s" repeatCount="indefinite"/>
-                        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.4s" repeatCount="indefinite"/>
+                    <circle cx="370" cy="375" r="42" fill="url(#mexicoGlow)" opacity="0.6">
+                        <animate attributeName="r" values="18;46;18" dur="2.4s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.25;0.75;0.25" dur="2.4s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="226" cy="240" r="7.5" fill="#00e5ff" stroke="#001826" stroke-width="2.5"/>
-                    <circle cx="226" cy="240" r="3" fill="#ffffff"/>
+                    <circle cx="370" cy="375" r="22" stroke="#28c76f" stroke-width="2" fill="none" opacity="0.8">
+                        <animate attributeName="r" values="8;32" dur="2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="370" cy="375" r="10" fill="#00e5ff" stroke="#001826" stroke-width="3"/>
+                    <circle cx="370" cy="375" r="4" fill="#ffffff"/>
 
-                    <!-- Origin Tag Pointer: "México" -->
-                    <rect x="194" y="210" width="64" height="20" rx="5" fill="rgba(0, 19, 32, 0.95)" stroke="#00b4e6" stroke-width="1" />
-                    <text x="226" y="224" font-family="'Outfit', sans-serif" font-size="10.5" fill="#ffffff" font-weight="700" text-anchor="middle" letter-spacing="0.04em">México</text>
+                    <!-- Origin Tag Pointer: "Jalisco, México" -->
+                    <g transform="translate(370, 335)">
+                        <rect x="-60" y="-18" width="120" height="26" rx="6" fill="rgba(0, 19, 32, 0.95)" stroke="#00b4e6" stroke-width="1.5" />
+                        <text x="0" y="0" font-family="'Outfit', sans-serif" font-size="12" fill="#ffffff" font-weight="700" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.04em">Jalisco, México</text>
+                    </g>
                 </g>
             </svg>
         </div>
@@ -386,11 +363,11 @@
 
 @code {
     private double zoomLevel = 1.0;
-    private string transformStyle => $"transform: scale({zoomLevel.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}); transform-origin: 226px 240px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);";
+    private string transformStyle => $"transform: scale({zoomLevel.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}); transform-origin: 370px 375px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);";
 
     private void ZoomIn()
     {
-        if (zoomLevel < 1.6) zoomLevel += 0.2;
+        if (zoomLevel < 1.8) zoomLevel += 0.2;
     }
 
     private void ZoomOut()
@@ -405,7 +382,7 @@
 
     private void CenterMexico()
     {
-        zoomLevel = 1.35;
+        zoomLevel = 1.45;
     }
 
     protected override void OnInitialized()

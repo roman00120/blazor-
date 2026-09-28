@@ -82,6 +82,21 @@ if (Test-Path "publish_out\wwwroot\images\hero-berry-cluster-transparent.png") {
         "publish_out\wwwroot\images\hero-berry-cluster-transparent.png" `
         "${server}:${remoteRoot}/images/hero-berry-cluster-transparent.png"
 }
+if (Test-Path "publish_out\wwwroot\images\world-map-cyan.webp") {
+    scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
+        "publish_out\wwwroot\images\world-map-cyan.webp" `
+        "${server}:${remoteRoot}/images/world-map-cyan.webp"
+}
+if (Test-Path "publish_out\wwwroot\images\world-map-cyan.png") {
+    scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
+        "publish_out\wwwroot\images\world-map-cyan.png" `
+        "${server}:${remoteRoot}/images/world-map-cyan.png"
+}
+if (Test-Path "publish_out\wwwroot\images\world-map-reference.png") {
+    scp -i $keyFile -P $port -o StrictHostKeyChecking=no `
+        "publish_out\wwwroot\images\world-map-reference.png" `
+        "${server}:${remoteRoot}/images/world-map-reference.png"
+}
 
 # 5. Clean remote _framework and unpack fresh bundle
 Write-Host "Packaging and uploading fresh _framework..." -ForegroundColor Yellow
